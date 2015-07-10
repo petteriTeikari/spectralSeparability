@@ -61,14 +61,47 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             % Karukstis KK, Thompson EHZ, Whiles JA, Rosenfeld RJ. 1998. 
             % Deciphering the fluorescence signature of daunomycin and doxorubicin. Biophysical Chemistry 73:249–263. 
             % http://dx.doi.org/10.1016/S0301-4622(98)00150-1
-        ind = ind + 1;
-        tmpData = importdata(fullfile('data','karukstis1998_DOX_emission_inWater_500-750nm.txt'), ',', 1);
+            ind = ind + 1;
+            tmpData = importdata(fullfile('data','karukstis1998_DOX_emission_inWater_500-750nm.txt'), ',', 1);
             fluoro{ind}.wavelength = tmpData.data(:,1);
             fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);
             fluoro{ind}.emission = tmpData.data(:,2);
             fluoro{ind}.excitation = zeros(length(fluoro{ind}.emission),1); % no data atm
             fluoro{ind}.name = 'DOX';
             fluoro{ind}.plotColor = [0.6 0.35 0.85];
+            
+        % Qtracker® vascular labels with NIR emission
+        % http://www.lifetechnologies.com/ca/en/home/life-science/cell-analysis/cellular-imaging/small-animal-in-vivo-imaging-saivi/qdots-for-in-vivo-applications.html#invivo
+        
+        % BV421 (Brilliant Violet) offers a good green / violet ratio in 2PM (Fig 6H)
+        
+            % Chattopadhyay et al. 2012. 
+            % Brilliant violet fluorophores: A new class of ultrabright fluorescent compounds for immunofluorescence experiments. 
+            % Cytometry 81A:456–466. http://dx.doi.org/10.1002/cyto.a.22043.
+
+            % http://www.biolegend.com/brilliantviolet
+        
+        % Alexa Fluor 633    
+        % http://www.lifetechnologies.com/ca/en/home/brands/molecular-probes/key-molecular-probes-products/alexa-fluor/alexa-fluor-products.html
+        
+            ind = ind + 1;
+            tmpData = importdata(fullfile('data','AlexaFluor633.csv'), ',', 1);
+            fluoro{ind}.wavelength = tmpData.data(:,1);
+            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);
+            fluoro{ind}.emission = tmpData.data(:,2);
+            fluoro{ind}.excitation = zeros(length(fluoro{ind}.emission),1); % no data atm
+            fluoro{ind}.name = 'AlexaFluor633';
+            fluoro{ind}.plotColor = [0.3 0 0];
+            
+        
+            % (Alexa Fluor 633) selectively labels neocortical arteries and arterioles by binding to elastin fibers. 
+            % We measured sensory stimulus–evoked arteriole dilation dynamics in mouse, rat and cat visual cortex using 
+            % Alexa Fluor 633 together with neuronal activity using calcium indicators or blood flow using fluorescein dextran.
+            
+            % Shen Z, Lu Z, Chhatbar PY, O’Herron P, Kara P. 2012. 
+            % An artery-specific fluorescent dye for studying neurovascular coupling. 
+            % Nat Methods 9:273–276. http://dx.doi.org/10.1038/nmeth.1857.
+
             
     %% FLUORESCENT MARKERS (Two-photon Excitation)
     

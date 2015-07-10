@@ -21,7 +21,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         peakWavelength = 900; % create synthetically, check whether this is correct!
                               % Replace maybe with actual in vivo
                               % measurements later
-        FWHM = 10; % [nm], check whether 10 nm is true for our system
+        FWHM = 10; % [nm], check whether 10 nm is true for our system, broad for a laser
         lightSources = import_lightSources(wavelength, peakWavelength, FWHM);    
         
             
