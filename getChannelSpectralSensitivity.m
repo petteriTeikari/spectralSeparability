@@ -74,7 +74,7 @@ function [channelVector, plotColor] = getChannelSpectralSensitivity(channelWante
             filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWanted1, 'filter', [], normalizeOn);
 
             filtersWanted2 = {'DM570'};
-            filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWanted2, 'filter', [], normalizeOn)
+            filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWanted2, 'filter', [], normalizeOn);
 
             % Get this later clarified
             PMTWanted = {'PMT Ga-As-P'};

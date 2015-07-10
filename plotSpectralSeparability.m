@@ -9,9 +9,9 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
     ind = 1;  excitInd = ind; fluoExcitInd = ind;
     sp(ind) = subplot(rows, cols, ind);
         
-        size(excitationMatrix.data)
-        size(wavelength)
-        size(fluoroExcitationMatrix.data)
+        % size(excitationMatrix.data)
+        % size(wavelength)
+        % size(fluoroExcitationMatrix.data)
         
         p{ind} = plot(wavelength, excitationMatrix.data, wavelength, fluoroExcitationMatrix.data);
         legStr = [excitationMatrix.name; fluoroExcitationMatrix.name'];

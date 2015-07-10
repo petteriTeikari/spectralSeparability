@@ -1,6 +1,4 @@
 function structureOut = import_truncateInput(structureIn, wavelength, yField)
-        
-    yField
 
     % get limits of all the various wavelengths
     for ind = 1 : length(structureIn)
@@ -18,10 +16,7 @@ function structureOut = import_truncateInput(structureIn, wavelength, yField)
         x = structureIn{ind}.wavelength;            
         y = structureIn{ind}.(yField);
 
-        % Interpolate
-        ind
-        whos
-            
+        % Interpolate            
         structureOut{ind}.(yField) = interp1(x, y, wavelengthOut);
 
         % re-assign wavelength

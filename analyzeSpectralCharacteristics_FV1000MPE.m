@@ -9,7 +9,9 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         wavelength = (300 : nmRes : 1100)'; 
                  
         % FLUOROPHORES
-        [fluoro, fluoro2PM] = import_fluorophoreData(wavelength);                
+        [fluoro, fluoro2PM] = import_fluorophoreData(wavelength);      
+            list1PM = getNameList(fluoro)
+            list2PM = getNameList(fluoro2PM)
         
         % Olympus FV100MPE filters
         filters = import_filterTransmissionData(wavelength);
@@ -71,7 +73,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
                 
         % Channels 
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};        
-        channelMatrix = zeros(length(wavelength), length(channelsWanted));
+        channelMatrix.data = zeros(length(wavelength), length(channelsWanted));
         for ch = 1 : length(channelsWanted)           
             % this function will combine the spectral sensitivities of the filters
             % (emission, dichroic mirrors, barrier filters etc.) with the
