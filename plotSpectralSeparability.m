@@ -19,7 +19,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
             legend('boxoff');
         title('Light Sources + Excitation Spectra, "i of X_i_j_k"')
         lab(ind,1) = xlabel('Wavelength [nm]');
-        lab(ind,2) = ylabel('Normalized Irradiance');
+        lab(ind,2) = ylabel('Normalized Irradiance/Sensitivity');
     
     % Fluorophores (j) : Fluorophores
     ind = ind+1; fluoEmisInd = ind;
@@ -42,7 +42,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
             legend('boxoff');
         title('Filters/Channels, k of X_i_j_k')
         lab(ind,1) = xlabel('Wavelength [nm]');
-        lab(ind,2) = ylabel('Normalized transmittance');
+        lab(ind,2) = ylabel('Normalized sensitivity');
         
     % style 
     set(sp(1:ind), 'XLim', [350 750], 'YLim', [0 1])
