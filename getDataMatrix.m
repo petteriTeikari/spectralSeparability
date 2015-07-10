@@ -17,6 +17,9 @@
     elseif strcmp(dataType, 'light')
         yFieldName = 'irradiance';
         
+    elseif strcmp(dataType, 'PMT')
+        yFieldName = 'sensitivity';
+        
     else
         disp(['dataType = ', dataType])
         error('What dataType you want, fluoro/filter/light?')
@@ -51,9 +54,9 @@
         for ji = 1 : length(dataIn) % how many fluorophores
             % easier variable names for debugging (the changes in import_
             % functions often propagate here apparently)
-            x = wavelengthIn{ji}
-            y = dataIn{ji}
-            whos
+            x = wavelengthIn{ji};
+            y = dataIn{ji};
+            % whos
             dataNew(:,ji) = interp1(x, y, wavelength_new);
         end
 

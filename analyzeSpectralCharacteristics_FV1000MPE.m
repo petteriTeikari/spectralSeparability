@@ -62,22 +62,24 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         excitationMatrix = getDataMatrix(lightSources, wavelength, lightsWanted, 'light', [], normalizeOn);
         
         % Fluorophores
-        fluorophoresWanted = {'OGB-1'; 'SR-101'};
+        fluorophoresWanted = {'OGB-1'; 'FITC'; 'SR-101'};
         absType = '2PM'; % or '1PM'
         yType = 'emission';
         fluoroEmissionMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);
         yType = 'excitation';
         fluoroExcitationMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);
                 
-        % Microscope filters
-        filtersWanted = {'BA570-625HQ'; 'BA495-540HQ'};
-        filterMatrixEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWanted, 'filter', [], normalizeOn);
-        filtersWanted = {'DM570'};
-        filterDichroicMatrix = getDataMatrix(filters.emissionDichroic, wavelength, filtersWanted, 'filter', [], normalizeOn);
-
-        % See the light path diagram of the 2-PM system 
-        % to add the dichroic filter?
-        channelMatrix = defineChannelSensitivity(filterMatrixEmission; % for testing
+        % Channels 
+        channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};        
+        channelMatrix = zeros(length(wavelength), length(channelsWanted));
+        for ch = 1 : length(channelsWanted)           
+            % this function will combine the spectral sensitivities of the filters
+            % (emission, dichroic mirrors, barrier filters etc.) with the
+            % spectral sensitivity of the PMT
+            [channelMatrix.data(:,ch), plotColor] = getChannelSpectralSensitivity(channelsWanted{ch}, ch, length(channelsWanted), wavelength, filters, PMTs, normalizeOn);            
+            channelMatrix.name{ch} = channelsWanted{ch};
+            channelMatrix.plotColor(ch,:) = plotColor;
+        end        
         
         % compute the spectral separability matrix, X_{ijk} 
         % e.g. Fig 3 of Oheim et al. (2014), http://dx.doi.org/10.1016/j.bbamcr.2014.03.010        
@@ -95,11 +97,11 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     
         options = [];
         fig5 = figure('Color', 'w', 'Name', 'Spectral Separability Analysis');
-        plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, filterMatrix, Xijk, Eijk, options)
+        plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
         
     
     %% Spectral unmixing 
     
         % placeholder now, to be implemented later
-        out = computeSpectralMixing(excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, filterMatrix, Xijk, Eijk, options);
+        out = computeSpectralMixing(excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options);
         
