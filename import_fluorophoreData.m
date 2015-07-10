@@ -1,7 +1,11 @@
 function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
 
     % TODO: repetition of the same, replace it with a function
-    % at some point
+    % at some point.
+    
+    % TODO: default interpolation method now, which does not matter that
+    % match as we densely sampled spectral data, check again if you start
+    % getting 10nm spaced data or even more sparse.
 
     %% FLUORESCENT MARKERS (Single-photon Excitation)
 
@@ -52,6 +56,20 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.name = 'SR-101';
             fluoro{ind}.plotColor = [0.5 0.1 0.15];
            
+        % Doxyrubicin
+
+            % Karukstis KK, Thompson EHZ, Whiles JA, Rosenfeld RJ. 1998. 
+            % Deciphering the fluorescence signature of daunomycin and doxorubicin. Biophysical Chemistry 73:249–263. 
+            % http://dx.doi.org/10.1016/S0301-4622(98)00150-1
+        ind = ind + 1;
+        tmpData = importdata(fullfile('data','karukstis1998_DOX_emission_inWater_500-750nm.txt'), ',', 1);
+            fluoro{ind}.wavelength = tmpData.data(:,1);
+            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);
+            fluoro{ind}.emission = tmpData.data(:,2);
+            fluoro{ind}.excitation = zeros(length(fluoro{ind}.emission),1); % no data atm
+            fluoro{ind}.name = 'DOX';
+            fluoro{ind}.plotColor = [0.6 0.35 0.15];
+            
     %% FLUORESCENT MARKERS (Two-photon Excitation)
     
         % Harder to find tabulated version of these, so have to extract
@@ -70,7 +88,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
         ind2PM = 1;
         tmp2PM = importdata(fullfile('data','mutze2012_OGB_dataPointsBetween720-1020.txt'), ',', 1);
             fluoro2PM{ind2PM}.wavelength = tmp2PM.data(:,1);
-            fluoro2PM{ind2PM}.wavelengthRes = fluoro{1}.wavelength(2) - fluoro{1}.wavelength(1);
+            fluoro2PM{ind2PM}.wavelengthRes = fluoro{ind2PM}.wavelength(2) - fluoro{ind2PM}.wavelength(1);
             fluoro2PM{ind2PM}.excitation = tmp2PM.data(:,2);
             fluoro2PM{ind2PM}.name = 'OGB-1';
             fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'excitation');
@@ -95,7 +113,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
         tmp2PM = importdata(fullfile('data','mutze2012_SRh101_dataPointsBetween720-1060.txt'), ',', 1);
             
             fluoro2PM{ind2PM}.wavelength = tmp2PM.data(:,1);
-            fluoro2PM{ind2PM}.wavelengthRes = fluoro{1}.wavelength(2) - fluoro{1}.wavelength(1);
+            fluoro2PM{ind2PM}.wavelengthRes = fluoro{ind2PM}.wavelength(2) - fluoro{ind2PM}.wavelength(1);
             fluoro2PM{ind2PM}.excitation = tmp2PM.data(:,2);
             fluoro2PM{ind2PM}.name = 'SR-101';
             fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'excitation');
@@ -121,7 +139,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
         tmp2PM = importdata(fullfile('data','mutze2012_FITCGreen__dataPointsBetween711-1037.txt'), ',', 1);
             
             fluoro2PM{ind2PM}.wavelength = tmp2PM.data(:,1);
-            fluoro2PM{ind2PM}.wavelengthRes = fluoro{1}.wavelength(2) - fluoro{1}.wavelength(1);
+            fluoro2PM{ind2PM}.wavelengthRes = fluoro{ind2PM}.wavelength(2) - fluoro{ind2PM}.wavelength(1);
             fluoro2PM{ind2PM}.excitation = tmp2PM.data(:,2);
             fluoro2PM{ind2PM}.name = 'FITC';
             fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'excitation');
