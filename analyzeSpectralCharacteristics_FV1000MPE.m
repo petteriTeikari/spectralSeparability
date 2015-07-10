@@ -23,7 +23,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         peakWavelength = 900; % create synthetically, check whether this is correct!
                               % Replace maybe with actual in vivo
                               % measurements later
-        FWHM = 10; % [nm], check whether 10 nm is true for our system, broad for a laser
+        FWHM = 3; % [nm], check whether 10 nm is true for our system, broad for a laser
         lightSources = import_lightSources(wavelength, peakWavelength, FWHM);    
         
             
@@ -64,7 +64,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         excitationMatrix = getDataMatrix(lightSources, wavelength, lightsWanted, 'light', [], normalizeOn);
         
         % Fluorophores
-        fluorophoresWanted = {'OGB-1'; 'FITC'; 'SR-101'; 'DOX'};
+        fluorophoresWanted = {'OGB-1'; 'FITC'; 'SR-101'; 'DOX'; 'AlexaFluor633'};
         absType = '2PM'; % or '1PM'
         yType = 'emission';
         fluoroEmissionMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);

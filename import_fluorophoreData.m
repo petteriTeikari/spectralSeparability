@@ -192,6 +192,31 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             end
             fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'emission');
             
+        % Alexa Fluor 633 (Mütze et al., 2012)
+        ind2PM = ind2PM + 1;
+        tmp2PM = importdata(fullfile('data','mutze2012_alexaFluor633_720-1010nm.txt'), ',', 1);
+            
+            fluoro2PM{ind2PM}.wavelength = tmp2PM.data(:,1);
+            fluoro2PM{ind2PM}.wavelengthRes = fluoro{ind2PM}.wavelength(2) - fluoro{ind2PM}.wavelength(1);
+            fluoro2PM{ind2PM}.excitation = tmp2PM.data(:,2);
+            fluoro2PM{ind2PM}.name = 'AlexaFluor633';
+            fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'excitation');
+            
+            % get the emission spectrum automagically from the
+            % corresponding single-photon one
+            ind_1PM = find(ismember(getNameList(fluoro), fluoro2PM{ind2PM}.name));
+            if isempty(ind_1PM)
+                warning(['no emission data found for fluorophore: "', fluoro2PM{ind2PM}.name, '", is that so or did you have a typo?'])
+                fluoro2PM{ind2PM}.emission = [];
+                fluoro2PM{ind2PM}.plotColor = [0 0 0];
+                fluoro2PM{ind2PM}.wavelength = [];
+            else
+                fluoro2PM{ind2PM}.emission = fluoro{ind_1PM}.emission;
+                fluoro2PM{ind2PM}.plotColor = fluoro{ind_1PM}.plotColor;
+                fluoro2PM{ind2PM}.wavelength = fluoro{ind_1PM}.wavelength;
+            end
+            fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'emission');
+            
         % DOX (Yuan et al. 2015)
         % http://dx.doi.org/10.1039/C4NR06420H
         ind2PM = ind2PM + 1;

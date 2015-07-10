@@ -13,7 +13,11 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         % size(wavelength)
         % size(fluoroExcitationMatrix.data)
         
-        p{ind} = plot(wavelength, excitationMatrix.data, wavelength, fluoroExcitationMatrix.data);
+        % p{ind} = plot(wavelength, excitationMatrix.data, wavelength, fluoroExcitationMatrix.data);        
+        ar{ind} = area(wavelength, excitationMatrix.data);
+        hold on
+        p{ind} = plot(wavelength, fluoroExcitationMatrix.data);
+        hold off
         legStr = [excitationMatrix.name; fluoroExcitationMatrix.name'];
         leg(ind) = legend(legStr);
             legend('boxoff');
@@ -54,8 +58,8 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
     end    
     
     for i = 1 : size(fluoroExcitationMatrix.data,2)
-        offset = 1; % number of light sources before (kinda non-elegant)
-        set(p{fluoExcitInd}(offset+i), 'Color', fluoroExcitationMatrix.plotColor(i,:))
+        
+        set(p{fluoExcitInd}(i), 'Color', fluoroExcitationMatrix.plotColor(i,:))
     end
     
     for i = 1 : size(fluoroEmissionMatrix.data, 2)
