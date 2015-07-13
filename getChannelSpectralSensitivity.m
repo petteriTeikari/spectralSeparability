@@ -21,7 +21,7 @@ function [channelVector, plotColor] = getChannelSpectralSensitivity(channelWante
             filterDichroic.data = 1 - filterDichroic.data;
 
             % Get this later clarified
-            PMTWanted = {'PMT Ga-As-P'};
+            PMTWanted = {'PMT Ga-As'};
             PMT = getDataMatrix(PMTs, wavelength, PMTWanted, 'PMT', [], normalizeOn);
 
             % color (that matches the color of the sensitivity)        
@@ -77,7 +77,7 @@ function [channelVector, plotColor] = getChannelSpectralSensitivity(channelWante
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWanted2, 'filter', [], normalizeOn);
 
             % Get this later clarified
-            PMTWanted = {'PMT Ga-As-P'};
+            PMTWanted = {'PMT Ga-As'};
             PMT = getDataMatrix(PMTs, wavelength, PMTWanted, 'PMT', [], normalizeOn);
 
             % color (that matches the color of the sensitivity)        
