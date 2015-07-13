@@ -1,4 +1,4 @@
-function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, filterMatrix, Xijk, Eijk, options)
+function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
 
     set(fig,  'Position', [0.04*scrsz(3) 0.305*scrsz(4) 0.880*scrsz(3) 0.40*scrsz(4)])
 
@@ -40,9 +40,13 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
     % Channels (k)
     ind = ind+1; filterInd = ind;
     sp(ind) = subplot(rows, cols, ind);
-        % size(filterMatrix.data)
-        p{ind} = plot(wavelength, filterMatrix.data);
-        leg(ind) = legend(filterMatrix.name);
+        % size(channelMatrix.data)
+        p{ind} = plot(wavelength, channelMatrix.data);    
+        % unwrap the structure for legendString
+        for legSt = 1 : length(channelMatrix.filtersUsed)
+            legStr{legSt} = channelMatrix.filtersUsed{legSt}.legendString;
+        end
+        leg(ind) = legend(legStr);        
             legend('boxoff');
         title('Filters/Channels, k of X_i_j_k')
         lab(ind,1) = xlabel('Wavelength [nm]');
@@ -51,6 +55,8 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
     % style 
     set(sp(1:ind), 'XLim', [350 750], 'YLim', [0 1])
     set(sp(1), 'XLim', [700 1100]) % add some switch later
+    % set(leg, 'Location', 'NorthEastOutside')
+    set(leg, 'FontSize', 7, 'Color', [.3 .3 .3])
     
     % correct colors
     for i = 1 : size(excitationMatrix.data,2)
@@ -66,8 +72,8 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         set(p{fluoEmisInd}(i), 'Color', fluoroEmissionMatrix.plotColor(i,:))
     end
     
-    for i = 1 : size(filterMatrix.data,2)
-        set(p{filterInd}(i), 'Color', filterMatrix.plotColor(i,:))
+    for i = 1 : size(channelMatrix.data,2)
+        set(p{filterInd}(i), 'Color', channelMatrix.plotColor(i,:))
     end
     
     % export_fig(fullfile('figuresOut', 'Xijk_plot.png'), '-r200', '-a1')
