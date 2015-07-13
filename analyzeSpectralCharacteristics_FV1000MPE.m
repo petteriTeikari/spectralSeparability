@@ -26,6 +26,9 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         FWHM = 3; % [nm], check whether 10 nm is true for our system, broad for a laser
         lightSources = import_lightSources(wavelength, peakWavelength, FWHM);    
         
+        % Tissue Absorption
+        tissueAttenuation = import_tissueAttenuation(wavelength);
+        
             
     %% PLOT INPUTs
     
