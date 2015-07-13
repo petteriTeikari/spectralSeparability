@@ -1,4 +1,4 @@
-function [channelVector, plotColor] = getChannelSpectralSensitivity(channelWanted, ch, noOfChannels, wavelength, filters, PMTs, normalizeOn)
+function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity(channelWanted, ch, noOfChannels, wavelength, filters, PMTs, normalizeOn)
 
     % Depending on the setup, these might not be so fixed and you could
     % only have these fixed 4 options (RXD1/2/3/4). Add later more if you
@@ -10,11 +10,11 @@ function [channelVector, plotColor] = getChannelSpectralSensitivity(channelWante
         if strcmp(channelWanted, 'RXD1') % VIOLET (420-460 nm)
 
             % Microscope filters
-            filtersWanted1 = {'BA420-460'};
-            filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWanted1, 'filter', [], normalizeOn);
+            filtersWantedEmission = {'BA420-460'};
+            filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWantedEmission, 'filter', [], normalizeOn);
 
-            filtersWanted2 = {'DM485'};
-            filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWanted2, 'filter', [], normalizeOn);
+            filtersWantedDichroic = {'DM485'};
+            filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
 
             % note now, we need to invert the transmittance as it is defined on
             % disk as passing the longer wavelength through
@@ -30,11 +30,11 @@ function [channelVector, plotColor] = getChannelSpectralSensitivity(channelWante
         elseif strcmp(channelWanted, 'RXD2') % GREEN (495-540 nm)
 
             % Microscope filters
-            filtersWanted1 = {'BA495-540HQ'};
-            filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWanted1, 'filter', [], normalizeOn);
+            filtersWantedEmission = {'BA460-510'};
+            filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWantedEmission, 'filter', [], normalizeOn);
 
-            filtersWanted2 = {'DM485'};
-            filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWanted2, 'filter', [], normalizeOn);
+            filtersWantedDichroic = {'DM485'};
+            filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
 
             % Get this later clarified
             PMTWanted = {'PMT Ga-As-P'};
@@ -46,15 +46,16 @@ function [channelVector, plotColor] = getChannelSpectralSensitivity(channelWante
         elseif strcmp(channelWanted, 'RXD3') % LONG-PASS (380-560 nm)
 
             % Microscope filters
-            filtersWanted1 = {'BA420-460'};
-            filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWanted1, 'filter', [], normalizeOn);
+            filtersWantedEmission = {'BA515-560'};
+            filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWantedEmission, 'filter', [], normalizeOn);
             
                 % no filter
-                filtersWanted1 = {'no filter'};
-                filterEmission.data = ones(length(wavelength), 1);
+                %filtersWantedEmission = {'no filter'};
+                %filterEmission.data = ones(length(wavelength), 1);
+                
 
-            filtersWanted2 = {'DM570'};
-            filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWanted2, 'filter', [], normalizeOn);
+            filtersWantedDichroic = {'DM570'};
+            filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
 
             % note now, we need to invert the transmittance as it is defined on
             % disk as passing the longer wavelength through
@@ -70,11 +71,11 @@ function [channelVector, plotColor] = getChannelSpectralSensitivity(channelWante
         elseif strcmp(channelWanted, 'RXD4') % RED (575-630 nm)
 
             % Microscope filters
-            filtersWanted1 = {'BA570-625HQ'};
-            filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWanted1, 'filter', [], normalizeOn);
+            filtersWantedEmission = {'BA570-625HQ'};
+            filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWantedEmission, 'filter', [], normalizeOn);
 
-            filtersWanted2 = {'DM570'};
-            filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWanted2, 'filter', [], normalizeOn);
+            filtersWantedDichroic = {'DM570'};
+            filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
 
             % Get this later clarified
             PMTWanted = {'PMT Ga-As'};
@@ -92,6 +93,8 @@ function [channelVector, plotColor] = getChannelSpectralSensitivity(channelWante
         % now just multiply the components, add "ones"-vectors if only channel
         % have something weird happening, e.g.   
         channelVector = filterEmission.data .* filterDichroic.data .* PMT.data;
+        filtersUsed.emission = filtersWantedEmission;
+        filtersUsed.dichroic = filtersWantedDichroic;
     
     %% Debug plot
     
@@ -115,8 +118,8 @@ function [channelVector, plotColor] = getChannelSpectralSensitivity(channelWante
                                  wavelength, PMT.data, ...
                                  wavelength, channelVector);
 
-                legStr = {['emission (', cell2mat(filtersWanted1), ')'];...
-                          ['dichroic (', cell2mat(filtersWanted2), ')'];...
+                legStr = {['emission (', cell2mat(filtersWantedEmission), ')'];...
+                          ['dichroic (', cell2mat(filtersWantedDichroic), ')'];...
                           ['PMT (', cell2mat(PMTWanted), ')'];...
                           ['Channel Out (', channelWanted, ')']};
 

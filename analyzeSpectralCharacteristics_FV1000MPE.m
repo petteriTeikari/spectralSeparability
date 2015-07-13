@@ -81,9 +81,10 @@ function analyzeSpectralCharacteristics_FV1000MPE()
             % this function will combine the spectral sensitivities of the filters
             % (emission, dichroic mirrors, barrier filters etc.) with the
             % spectral sensitivity of the PMT
-            [channelMatrix.data(:,ch), plotColor] = getChannelSpectralSensitivity(channelsWanted{ch}, ch, length(channelsWanted), wavelength, filters, PMTs, normalizeOn);            
+            [channelMatrix.data(:,ch), plotColor, filtersUsed] = getChannelSpectralSensitivity(channelsWanted{ch}, ch, length(channelsWanted), wavelength, filters, PMTs, normalizeOn);            
             channelMatrix.name{ch} = channelsWanted{ch};
             channelMatrix.plotColor(ch,:) = plotColor;
+            channelMatrix.filtersUsed{ch} = filtersUsed;
         end        
         
         % compute the spectral separability matrix, X_{ijk} 

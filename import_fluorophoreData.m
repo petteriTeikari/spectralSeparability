@@ -81,6 +81,10 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
 
             % http://www.biolegend.com/brilliantviolet
         
+        % Indo-1 would be a blue Calcium indicator
+        
+        
+            
         % Alexa Fluor 633    
         % http://www.lifetechnologies.com/ca/en/home/brands/molecular-probes/key-molecular-probes-products/alexa-fluor/alexa-fluor-products.html
         
