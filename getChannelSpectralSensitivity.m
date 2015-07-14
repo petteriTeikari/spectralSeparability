@@ -97,7 +97,8 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
         filtersUsed.dichroic = filtersWantedDichroic;
         
         % for easier plotting later, construct the legend string to be displayed    
-        filtersUsed.legendString = [channelWanted, ' (', cell2mat(filtersUsed.dichroic), '+', cell2mat(filtersUsed.emission),')']
+        filtersUsed.legendString = [channelWanted, ' (', cell2mat(filtersUsed.dichroic), '+', cell2mat(filtersUsed.emission),')'];
+        
     %% Debug plot
     
         debugPlot = false;

@@ -279,7 +279,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             wavelengthIn{i} = fluoro{i}.wavelength;
         end
     
-        disp('1PM')
+        % disp('1PM')
         fluoro = import_truncateInput(fluoro, wavelength, 'excitation');
         
         % quickFix
@@ -291,7 +291,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
         
         % everything should be okay now, check later, this could be
         % redundant simply
-        disp('2PM')
+        % disp('2PM')
         fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'excitation');
         fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'emission');
     

@@ -3,13 +3,13 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
     % Eventually will contain a Matlab implementation of Spectral
     % Separability Index X_{ijk} and later also the relative brightness
     % variant E_{ijk}
-    
-    excitationLaser
-    fluoroEmission
-    fluoroExcitation
-    fluorophoreIndices
-    channelMatrix
-    matrixType
+    %     
+    %     excitationLaser
+    %     fluoroEmission
+    %     fluoroExcitation
+    %     fluorophoreIndices
+    %     channelMatrix
+    %     matrixType
     
     % Based on:
     % ---------
