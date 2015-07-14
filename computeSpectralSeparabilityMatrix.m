@@ -150,7 +150,7 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                     if j == 1 
                         
                     end
-                    plot_Xijk_debugPerIteration(wavelength, Xijk.emission{i,j,k}, Xijk.channel{i,j,k}, Xijk.response{i,j,k}, i, j, k)
+                    % plot_Xijk_debugPerIteration(wavelength, Xijk.emission{i,j,k}, Xijk.channel{i,j,k}, Xijk.response{i,j,k}, i, j, k)
                 end
             end            
         end        
@@ -158,7 +158,7 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
         
     % TODO: if you start having multiple light sources, the current code
     % does not work for that
-    Xijk.matrix
+    % Xijk.matrix
     
     
     % squeeze the channel dimension away so we get a 2D matrix

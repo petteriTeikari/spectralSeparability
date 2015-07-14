@@ -17,4 +17,4 @@ function plotXijkAsImage(fig, scrsz, Xijk, upscaleFactor, fluoroEmission, channe
 
     title('X_i_j_k', 'FontWeight', 'bold', 'FontSize', 11)
     
-    % export_fig(fullfile('figuresOut', 'Xijk_ImageMatrix.png'), '-r200', '-a1')
+    export_fig(fullfile('figuresOut', 'Xijk_ImageMatrix_630nmDichroic.png'), '-r200', '-a1')

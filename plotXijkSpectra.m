@@ -50,6 +50,6 @@ function plotXijkSpectra(fig, scrsz, wavelength, excitationMatrix, fluoroEmissio
     set(tit, 'FontSize', 9, 'FontWeight', 'bold')
     set(ylab, 'FontSize', 9, 'FontWeight', 'bold')
     
-    % export_fig(fullfile('figuresOut', 'Xijk_SpectralPlot.png'), '-r200', '-a1')
+    export_fig(fullfile('figuresOut', 'Xijk_SpectralPlot_630nmDichroic.png'), '-r200', '-a1')
     
     

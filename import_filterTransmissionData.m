@@ -103,8 +103,18 @@ function filters = import_filterTransmissionData(wavelength)
             filters.barrierDichroic{k}.wavelength = tmp.data(:,1);
             filters.barrierDichroic{k}.transmittance = tmp.data(:,2);
             filters.barrierDichroic{k}.plotColor = 'r';
+           
+    % 3rd Party Dichroic mirrors
+    
+        i = i + 1;
+        filters.emissionDichroic{i}.name = 'T635lpxr';
+        fileName = 'T635lpxr_Chroma_5050-ascii.txt';
+        tmp = importdata(fullfile('data',fileName), delim, noOfHeaders);
+            filters.emissionDichroic{i}.wavelength = tmp.data(:,1);
+            filters.emissionDichroic{i}.transmittance = tmp.data(:,2);
+            filters.emissionDichroic{i}.plotColor = 'r';
             
-    % Now the values were in percent, easier to scale to 0:1 for
+    % Now the values can be in percent, easier to scale to 0:1 for
     % following computations
     for i = 1 : length(filters.emissionDichroic)
         filters.emissionDichroic{i}.transmittance = filters.emissionDichroic{i}.transmittance / ...
