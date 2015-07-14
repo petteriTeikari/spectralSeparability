@@ -67,7 +67,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         excitationMatrix = getDataMatrix(lightSources, wavelength, lightsWanted, 'light', [], normalizeOn);
         
         % Fluorophores
-        fluorophoresWanted = {'OGB-1'; 'FITC'; 'SR-101'; 'DOX'; 'AlexaFluor633'};
+        fluorophoresWanted = {'OGB-1'; 'SR-101'; 'AlexaFluor633'};
         absType = '2PM'; % or '1PM'
         yType = 'emission';
         fluoroEmissionMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);
@@ -75,7 +75,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         fluoroExcitationMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);
                 
         % Channels 
-        channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};        
+        channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};
         channelMatrix.data = zeros(length(wavelength), length(channelsWanted));
         for ch = 1 : length(channelsWanted)           
             % this function will combine the spectral sensitivities of the filters
@@ -89,14 +89,16 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         
         % compute the spectral separability matrix, X_{ijk} 
         % e.g. Fig 3 of Oheim et al. (2014), http://dx.doi.org/10.1016/j.bbamcr.2014.03.010        
-        Xijk = computeSpectralSeparabilityMatrix(excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, 'specificity');
-        
+        % the give the corresponding channels
+        fluorophoreIndices = [2 3 4]; % manual now, maybe add some automagic later
+        Xijk = computeSpectralSeparabilityMatrix(excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, fluorophoreIndices, channelMatrix, 'specificity');
+              
         % as well as the E_{ijk} for relative brightness values (that takes
         % into account the molecular brightness and absolute fluorescence
         % collected fraction, for some details see Oheim et al. (2014), and
         % wait for the upcoming "M. Oheim, M. van't Hoff, Xijk — a figure of merit 
         % and software tool for evaluating spectral cross-talk in multi-channel fluorescence,"
-        Eijk = computeSpectralSeparabilityMatrix(excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, 'relative');
+        Eijk = computeSpectralSeparabilityMatrix(excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, fluorophoreIndices, channelMatrix, 'relative');
         
         
     %% Plot spectral separability analysis
