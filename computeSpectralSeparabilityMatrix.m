@@ -118,7 +118,10 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
                 channelResponseScalar(i,j,k) = trapz(squeeze(channelResponseVector(i,j,k,:)));
                 
                 % trapezoidal integration
-                Xijk(i,j,k) = nmRes * trapz(squuezedEmissionVector .* channelMatrix.data(:,k));
+                Xijk.emission = squuezedEmissionVector;
+                Xijk.channel = channelMatrix.data(:,k);
+                Xijk.response = Xijk.emission .* Xijk.channel;
+                Xijk.matrix(i,j,k) = nmRes * trapz(Xijk.response);
                 
                 if debugPlot
                     if j == 1 
@@ -146,49 +149,33 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
         
     % squeeze the channel dimension away so we get a 2D matrix, quick fix
     if noOfLightSources == 1
-        Xijk2 = squeeze(Xijk);
-        Xijk = Xijk2;
+        Xijk2.matrix = squeeze(Xijk.matrix);
+        Xijk.matrix = Xijk2.matrix;
     end
    
     % normalize per channel
     for k = 1 : noOfChannels
-        maxResponse = max(Xijk(:,k));
-        normChannelResponse = Xijk(:,k) / maxResponse;
-        Xijk(:,k) = normChannelResponse;
+        maxResponse = max(Xijk.matrix(:,k));
+        normChannelResponse = Xijk.matrix(:,k) / maxResponse;
+        Xijk.matrix(:,k) = normChannelResponse;
     end
     
     % remove NaNs
-    Xijk(isnan(Xijk)) = 0;
-    Xijk
+    Xijk.matrix(isnan(Xijk.matrix)) = 0;
     
-    plotXijkAsImage(Xijk, 100, fluoroEmission, channelMatrix)
+    
     
     function vectorOut = removeNaNs(vectorIn, dataType)
         
         vectorOut = vectorIn;
         vectorOut(isnan(vectorIn)) = 0;
         
-        noNansIn = length(find(isnan(vectorIn)))
-        noNansOut = length(find(isnan(vectorOut)))
+        noNansIn = length(find(isnan(vectorIn)));
+        noNansOut = length(find(isnan(vectorOut)));
         
     
     function plot_Xijk_debugPerIteration()
         % add later stuff
         
-    function plotXijkAsImage(Xijk, upscaleFactor, fluoroEmission, channelMatrix)
-        
-        % now we for example 3x4 matrix which will be so tiny when plotted
-        XijkImage = imresize(Xijk, upscaleFactor, 'nearest');
-        imshow(XijkImage)
-        colormap('jet')
-        colorbar
-        
-        xTickLocs = upscaleFactor * (0.5:1:(size(Xijk,2) - 0.5));
-        yTickLocs = upscaleFactor * (0.5:1:(size(Xijk,1) - 0.5));
-        axis on
-                
-        set(gca, 'YTickLabel', fluoroEmission.name, 'YTick', yTickLocs)
-        set(gca, 'XTickLabel', channelMatrix.name, 'XTick', xTickLocs)
-        
-        title('X_i_j_k', 'FontWeight', 'bold', 'FontSize', 11)
+    
     

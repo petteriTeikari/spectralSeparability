@@ -1,9 +1,8 @@
 function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
 
-    set(fig,  'Position', [0.04*scrsz(3) 0.305*scrsz(4) 0.880*scrsz(3) 0.40*scrsz(4)])
+    set(fig,  'Position', [0.04*scrsz(3) 0.05*scrsz(4) 0.40*scrsz(3) 0.90*scrsz(4)])
 
-    rows = 1; cols = 3;
-        % add later the rows when you implement the Xijk and Eijk
+    rows = 3; cols = 1;
     
     % Excitation (i) : Light Sources
     ind = 1;  excitInd = ind; fluoExcitInd = ind;
@@ -64,8 +63,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         set(p{excitInd}(i), 'Color', 'k')
     end    
     
-    for i = 1 : size(fluoroExcitationMatrix.data,2)
-        
+    for i = 1 : size(fluoroExcitationMatrix.data,2)        
         set(p{fluoExcitInd}(i), 'Color', fluoroExcitationMatrix.plotColor(i,:))
     end
     
