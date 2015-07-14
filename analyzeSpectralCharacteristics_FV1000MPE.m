@@ -104,14 +104,14 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     %% Plot spectral separability analysis
     
         options = [];
-        %{
+        
         fig5 = figure('Color', 'w', 'Name', 'Spectral Separability Basis Vectors');
         plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
         
         fig6 = figure('Color', 'w', 'Name', 'Xijk');
         upscaleFactor = 100;
         plotXijkAsImage(fig6, scrsz, Xijk, upscaleFactor, fluoroEmissionMatrix, channelMatrix)
-        %}
+        
         
         fig7 = figure('Color', 'w', 'Name', 'Xijk (Spectra)');
         plotXijkSpectra(fig7, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)

@@ -54,7 +54,7 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
     % sources)
     
     % Preallocate
-    Xijk = zeros(noOfLightSources, noOfFluorophores, noOfChannels);
+    Xijk.matrix = zeros(noOfLightSources, noOfFluorophores, noOfChannels);
     
     % debug matrices
     numberOfWavelengthPoints = size(excitationLaser.data,1);
@@ -118,10 +118,10 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
                 channelResponseScalar(i,j,k) = trapz(squeeze(channelResponseVector(i,j,k,:)));
                 
                 % trapezoidal integration
-                Xijk.emission = squuezedEmissionVector;
-                Xijk.channel = channelMatrix.data(:,k);
-                Xijk.response = Xijk.emission .* Xijk.channel;
-                Xijk.matrix(i,j,k) = nmRes * trapz(Xijk.response);
+                Xijk.emission{i,j,k} = squuezedEmissionVector;
+                Xijk.channel{i,j,k} = channelMatrix.data(:,k);
+                Xijk.response{i,j,k} = Xijk.emission{i,j,k} .* Xijk.channel{i,j,k};
+                Xijk.matrix(i,j,k) = nmRes * trapz(Xijk.response{i,j,k});
                 
                 if debugPlot
                     if j == 1 
@@ -147,7 +147,10 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
         end        
     end
         
-    % squeeze the channel dimension away so we get a 2D matrix, quick fix
+    % TODO: if you start having multiple light sources, the current code
+    % does not work for that
+    
+    % squeeze the channel dimension away so we get a 2D matrix
     if noOfLightSources == 1
         Xijk2.matrix = squeeze(Xijk.matrix);
         Xijk.matrix = Xijk2.matrix;

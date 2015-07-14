@@ -117,7 +117,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.excitation = tmpData.data(:,2);
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'AlexaFluor633';
-            fluoro{ind}.plotColor = [0.3 0 0];
+            fluoro{ind}.plotColor = [1 0 0];
             
             
     %% FLUORESCENT MARKERS (Two-photon Excitation)
