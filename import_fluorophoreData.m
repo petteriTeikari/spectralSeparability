@@ -3,9 +3,17 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
     % TODO: repetition of the same, replace it with a function
     % at some point.
     
+        % e.g.
+        % columnHeaders = {'wavelength'; 'excitation'; 'emission'};
+        % fluoro{ind}.(columnHeaders{1}) = tmpData.data(:,1);
+        % fluoro{ind} = import_1PM_fluor(filePath, delimiterIn, noOfHeaderRows, columnHeaders)
+    
     % TODO: default interpolation method now, which does not matter that
     % match as we densely sampled spectral data, check again if you start
     % getting 10nm spaced data or even more sparse.
+    
+    % TODO: Is there a database for all the fluorophores so you could at
+    % least retrieve the 1-PM emission/excitation spectra automagically
 
     %% FLUORESCENT MARKERS (Single-photon Excitation)
 
@@ -13,6 +21,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
         % https://www.lifetechnologies.com/order/catalog/product/O6807
         ind = 1;
         tmpData = importdata(fullfile('data','OregonGreen488_BAPTA.csv'), ',', 1);
+        
             fluoro{ind}.wavelength = tmpData.data(:,1);
             fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);
             fluoro{ind}.excitation = tmpData.data(:,2);
@@ -41,21 +50,18 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'FITC';
             fluoro{ind}.plotColor = [0 .6 .2];
-            
-        % SR-101
-        % http://omlc.org/spectra/PhotochemCAD/html/012.html
+           
+        % SR-101 (Chroma)
+        % https://www.chroma.com/products/parts/t610lpxr?fluorochromes=10488,10411
         ind = ind + 1;
-        tmpDataAbs = importdata(fullfile('data','SR101_012-abs.txt'), '\t', 23);
-        tmpDataEms = importdata(fullfile('data','SR101_012-ems.txt'), '\t', 23);
-
-            % Interpolate (as the wavelength vectors are different for
-            % emission and excitation)
-            fluoro{ind}.wavelength = wavelength;
-            fluoro{ind}.excitation = interp1(tmpDataAbs.data(:,1), tmpDataAbs.data(:,2), wavelength);
-            fluoro{ind}.emission = interp1(tmpDataEms.data(:,1), tmpDataEms.data(:,2), wavelength); 
+        tmpData = importdata(fullfile('data','SR101.csv'), ',', 1);
+            fluoro{ind}.wavelength = tmpData.data(:,1);
+            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);
+            fluoro{ind}.excitation = tmpData.data(:,2);
+            fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'SR-101';
             fluoro{ind}.plotColor = [0.5 0.1 0.15];
-           
+            
         % Doxyrubicin
 
             % Karukstis KK, Thompson EHZ, Whiles JA, Rosenfeld RJ. 1998. 
@@ -80,23 +86,21 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             % Cytometry 81A:456–466. http://dx.doi.org/10.1002/cyto.a.22043.
 
             % http://www.biolegend.com/brilliantviolet
+            ind = ind + 1;
+            tmpData = importdata(fullfile('data','bv421_1nmRes_bioLegend.csv'), ',', 1);
+            fluoro{ind}.wavelength = tmpData.data(:,1);
+            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);            
+            fluoro{ind}.excitation = tmpData.data(:,2);
+            fluoro{ind}.emission = tmpData.data(:,3);
+            fluoro{ind}.name = 'BV421';
+            fluoro{ind}.plotColor = [1 0 1];
         
         % Indo-1 would be a blue Calcium indicator
-        
-        
-            
-        % Alexa Fluor 633    
-        % http://www.lifetechnologies.com/ca/en/home/brands/molecular-probes/key-molecular-probes-products/alexa-fluor/alexa-fluor-products.html
-        
-            ind = ind + 1;
-            tmpData = importdata(fullfile('data','AlexaFluor633.csv'), ',', 1);
-            fluoro{ind}.wavelength = tmpData.data(:,1);
-            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);
-            fluoro{ind}.emission = tmpData.data(:,2);
-            fluoro{ind}.excitation = zeros(length(fluoro{ind}.emission),1); % no data atm
-            fluoro{ind}.name = 'AlexaFluor633';
-            fluoro{ind}.plotColor = [0.3 0 0];
-            
+                   
+
+        % Alexa Fluor 633 (Chroma)
+        % https://www.chroma.com/products/parts/t610lpxr?fluorochromes=10488,10411
+        % ... or http://www.lifetechnologies.com/ca/en/home/brands/molecular-probes/key-molecular-probes-products/alexa-fluor/alexa-fluor-products.html
         
             % (Alexa Fluor 633) selectively labels neocortical arteries and arterioles by binding to elastin fibers. 
             % We measured sensory stimulus–evoked arteriole dilation dynamics in mouse, rat and cat visual cortex using 
@@ -105,7 +109,16 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             % Shen Z, Lu Z, Chhatbar PY, O’Herron P, Kara P. 2012. 
             % An artery-specific fluorescent dye for studying neurovascular coupling. 
             % Nat Methods 9:273–276. http://dx.doi.org/10.1038/nmeth.1857.
-
+        
+            ind = ind + 1;
+            tmpData = importdata(fullfile('data','AlexaFluor633.csv'), ',', 1);
+            fluoro{ind}.wavelength = tmpData.data(:,1);
+            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);            
+            fluoro{ind}.excitation = tmpData.data(:,2);
+            fluoro{ind}.emission = tmpData.data(:,3);
+            fluoro{ind}.name = 'AlexaFluor633';
+            fluoro{ind}.plotColor = [0.3 0 0];
+            
             
     %% FLUORESCENT MARKERS (Two-photon Excitation)
     
@@ -220,6 +233,22 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
                 fluoro2PM{ind2PM}.wavelength = fluoro{ind_1PM}.wavelength;
             end
             fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'emission');
+            
+        % BV421 (Dummy)
+        ind2PM = ind2PM + 1;
+                fluoro2PM{ind2PM}.name = 'BV421';
+                fluoro2PM{ind2PM}.wavelength = wavelength;
+                fluoro2PM{ind2PM}.excitation = zeros(length(wavelength),1);
+                fluoro2PM{ind2PM}.excitation(:) = NaN;     
+                fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'excitation');
+                
+                ind_1PM = find(ismember(getNameList(fluoro), fluoro2PM{ind2PM}.name));                
+                fluoro2PM{ind2PM}.wavelengthRes = fluoro{ind2PM}.wavelength(2) - fluoro{ind2PM}.wavelength(1);                          
+                fluoro2PM{ind2PM}.emission = fluoro{ind_1PM}.emission;
+                fluoro2PM{ind2PM}.plotColor = fluoro{ind_1PM}.plotColor;
+                fluoro2PM{ind2PM}.wavelength = fluoro{ind_1PM}.wavelength;
+                fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'emission');
+                
             
         % DOX (Yuan et al. 2015)
         % http://dx.doi.org/10.1039/C4NR06420H

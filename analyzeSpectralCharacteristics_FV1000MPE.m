@@ -67,7 +67,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         excitationMatrix = getDataMatrix(lightSources, wavelength, lightsWanted, 'light', [], normalizeOn);
         
         % Fluorophores
-        fluorophoresWanted = {'FITC'; 'OGB-1'; 'SR-101'; 'AlexaFluor633'};
+        fluorophoresWanted = {'BV421'; 'OGB-1'; 'SR-101'; 'AlexaFluor633'};
         absType = '2PM'; % or '1PM'
         yType = 'emission';
         fluoroEmissionMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);

@@ -16,7 +16,8 @@ function structureOut = import_truncateInput(structureIn, wavelength, yField)
         x = structureIn{ind}.wavelength;            
         y = structureIn{ind}.(yField);
 
-        % Interpolate            
+        % Interpolate     
+        whos
         structureOut{ind}.(yField) = interp1(x, y, wavelengthOut);
 
         % re-assign wavelength
