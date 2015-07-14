@@ -1,10 +1,12 @@
-function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity(channelWanted, ch, noOfChannels, wavelength, filters, PMTs, normalizeOn)
+function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity(channelWanted, ch, noOfChannels, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn)
 
     % Depending on the setup, these might not be so fixed and you could
     % only have these fixed 4 options (RXD1/2/3/4). Add later more if you
     % can change the emission filters or mirrors for example without having
     % to remove the old definitons.
 
+    % barrierFilterWanted % better to use when computing the Xijk
+    
     %% CHANNEL-SPECIFIC 
     
         if strcmp(channelWanted, 'RXD1') % VIOLET (420-460 nm)

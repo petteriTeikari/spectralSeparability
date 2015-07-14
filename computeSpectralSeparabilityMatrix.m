@@ -1,15 +1,13 @@
-function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmission, fluoroExcitation, fluorophoreIndices, channelMatrix, matrixType)
+function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fluoroEmission, fluoroExcitation, fluorophoreIndices, ...
+                                                    barrierFilterWanted, filters, channelMatrix, matrixType, normalizeOn)
 
     % Eventually will contain a Matlab implementation of Spectral
     % Separability Index X_{ijk} and later also the relative brightness
     % variant E_{ijk}
-    %     
-    %     excitationLaser
-    %     fluoroEmission
-    %     fluoroExcitation
-    %     fluorophoreIndices
-    %     channelMatrix
-    %     matrixType
+
+    % get barrier filter
+    filtersWantedEmission = {'BA420-460'};
+            
     
     % Based on:
     % ---------
@@ -49,6 +47,17 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
     noOfFluorophores = size(fluoroExcitation.data,2); % j
     noOfChannels = size(channelMatrix.data,2); % k
     
+    % get barrier dichroic, this separates RXD1&RXD2 from RXD3&RXD4
+    filterBarrier = getDataMatrix(filters.barrierDichroic, wavelength, barrierFilterWanted, 'filter', [], normalizeOn);
+        % filter the emissions with this barrier filter
+        
+        % manual fix, as RXD1 and RXD2 get wavelengths below cutoff, and
+        % RXD3 and RXD4 above the cutoff
+        ch = 1; barrierFilter{ch} = 1- filterBarrier.data;
+        ch = 2; barrierFilter{ch} = 1- filterBarrier.data;
+        ch = 3; barrierFilter{ch} = filterBarrier.data;
+        ch = 4; barrierFilter{ch} = filterBarrier.data;
+    
     % For our 2-PM system we have only one light source, thus we should
     % have a matrix that is j x k (this works also for multiple light
     % sources)
@@ -60,6 +69,7 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
     numberOfWavelengthPoints = size(excitationLaser.data,1);
     excitationOfFluorophoreVector = zeros(noOfLightSources, noOfFluorophores, noOfChannels, numberOfWavelengthPoints);
     excitationOfFluorophoreScalar = zeros(noOfLightSources, noOfFluorophores, noOfChannels);
+    emissionOfFluorophoreVectorRaw = zeros(noOfLightSources, noOfFluorophores, noOfChannels, numberOfWavelengthPoints);
     emissionOfFluorophoreVector = zeros(noOfLightSources, noOfFluorophores, noOfChannels, numberOfWavelengthPoints);
     channelResponseVector = zeros(noOfLightSources, noOfFluorophores, noOfChannels, numberOfWavelengthPoints);
     channelResponseScalar = zeros(noOfLightSources, noOfFluorophores, noOfChannels);
@@ -70,8 +80,6 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
     % debugMatrices
     debugPlot = true;
     
-    
-    
     for i = 1 : noOfLightSources        
         for j = 1 : noOfFluorophores            
             for k = 1 : noOfChannels
@@ -81,6 +89,7 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
                 fluoroExcitation.data(:,j) = removeNaNs(fluoroExcitation.data(:,j), 'excitation');
                 fluoroEmission.data(:,j) = removeNaNs(fluoroEmission.data(:,j), 'emission');
                 channelMatrix.data(:,k) = removeNaNs(channelMatrix.data(:,k), 'channel');
+                barrierFilter{ch} = removeNaNs(barrierFilter{ch}, 'barrier');
                 
                 % debug variables
                 if nansum(fluoroExcitation.data(:,j)) == 0
@@ -110,7 +119,21 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
                 end
                 
                 % scale the emission with this estimate scalar
-                emissionOfFluorophoreVector(i,j,k,:) = excitationOfFluorophoreScalar(i,j,k) .* fluoroEmission.data(:,j);
+                emissionOfFluorophoreVectorRaw(i,j,k,:) = excitationOfFluorophoreScalar(i,j,k) .* fluoroEmission.data(:,j);
+                
+                % normalize the vector before barrier filter
+                emissionOfFluorophoreVector(i,j,k,:) = emissionOfFluorophoreVectorRaw(i,j,k,:) / max(emissionOfFluorophoreVectorRaw(i,j,k,:));
+                
+                % now filter this emission with the barrier filter (defined
+                % above)
+                emissionVector = squeeze(emissionOfFluorophoreVector(i,j,k,:));                
+                emissionOfFluorophoreVector(i,j,k,:) = emissionVector .* barrierFilter{k};
+                    
+                    % debug
+                    %{
+                    plot(wavelength, emissionVector, wavelength, barrierFilter{k}, wavelength, squeeze(emissionOfFluorophoreVector(i,j,k,:))); 
+                        legend('emission', 'barrier'); title(num2str(k)); pause(2.0)
+                    %}
                 
                 % channelResponse
                 squuezedEmissionVector = squeeze(emissionOfFluorophoreVector(i,j,k,:)); % remove singleton-dimensions
@@ -118,30 +141,16 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
                 channelResponseScalar(i,j,k) = trapz(squeeze(channelResponseVector(i,j,k,:)));
                 
                 % trapezoidal integration
-                Xijk.emission{i,j,k} = squuezedEmissionVector;
-                Xijk.channel{i,j,k} = channelMatrix.data(:,k);
+                Xijk.emission{i,j,k} = removeNaNs(squuezedEmissionVector, 'finalEmission');
+                Xijk.channel{i,j,k} = removeNaNs(channelMatrix.data(:,k), 'finalChannel');
                 Xijk.response{i,j,k} = Xijk.emission{i,j,k} .* Xijk.channel{i,j,k};
                 Xijk.matrix(i,j,k) = nmRes * trapz(Xijk.response{i,j,k});
                 
                 if debugPlot
                     if j == 1 
-                        %{
-                        [i j k]
-                        figure
-                        fluoroExcitation.name{j} 
-                        excitationOfFluorophoreScalar(i,j,k)
-                        hold on
-                        plot(squuezedEmissionVector, 'r')
-                        plot(fluoroEmission.data(:,j), 'k')
-                        plot(squeeze(excitationOfFluorophoreVector(i,j,k,:)), 'g')
-                        hold off
-                        % plot(squuezedEmissionVector, 'b')
-                        % channelMatrix.data(:,k)
-                        title(num2str(k))
-                        pause
-                        %}
+                        
                     end
-                    plot_Xijk_debugPerIteration()
+                    plot_Xijk_debugPerIteration(wavelength, Xijk.emission{i,j,k}, Xijk.channel{i,j,k}, Xijk.response{i,j,k}, i, j, k)
                 end
             end            
         end        
@@ -149,6 +158,8 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
         
     % TODO: if you start having multiple light sources, the current code
     % does not work for that
+    Xijk.matrix
+    
     
     % squeeze the channel dimension away so we get a 2D matrix
     if noOfLightSources == 1
@@ -177,8 +188,12 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
         noNansOut = length(find(isnan(vectorOut)));
         
     
-    function plot_Xijk_debugPerIteration()
-        % add later stuff
+    function plot_Xijk_debugPerIteration(wavelength, emission, channel, response, i, j, k)
+        
+        plot(wavelength, emission, wavelength, channel, wavelength, response)
+        title([num2str(i), ', ', num2str(j), ', ', num2str(k)])
+        legend('emission', 'channel', 'response')
+        pause(0.2)
         
     
     

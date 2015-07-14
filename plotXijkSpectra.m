@@ -23,7 +23,7 @@ function plotXijkSpectra(fig, scrsz, wavelength, excitationMatrix, fluoroEmissio
             sp(j,k) = subplot(rows,cols,ind);
                 p{j,k}(1) = area(wavelength, Xijk.channel{laserIndex,j,k});  
                 hold on
-                p{j,k}(2) = plot(wavelength, Xijk.emission{laserIndex,j,k} / max(Xijk.emission{laserIndex,j,k}));
+                p{j,k}(2) = plot(wavelength, Xijk.emission{laserIndex,j,k});
                 hold off                                
             
             % color            

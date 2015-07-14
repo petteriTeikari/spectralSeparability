@@ -85,6 +85,25 @@ function filters = import_filterTransmissionData(wavelength)
             filters.emissionFilter{j}.plotColor = [1 0 0];
 
 
+    % BARRIER FILTERS
+    
+        k = 1;
+            filters.barrierDichroic{k}.name = 'SDM560';
+            fileName = 'olympus_barrierFilters_SDM560.txt';
+            tmp = importdata(fullfile('data',fileName), delim, noOfHeaders);
+            filters.barrierDichroic{k}.wavelength = tmp.data(:,1);
+            filters.barrierDichroic{k}.transmittance = tmp.data(:,2);
+            filters.barrierDichroic{k}.plotColor = 'g';
+        
+        
+        k = k + 1;
+            filters.barrierDichroic{k}.name = 'SDM640';
+            fileName = 'olympus_barrierFilters_SDM640.txt';
+            tmp = importdata(fullfile('data',fileName), delim, noOfHeaders);
+            filters.barrierDichroic{k}.wavelength = tmp.data(:,1);
+            filters.barrierDichroic{k}.transmittance = tmp.data(:,2);
+            filters.barrierDichroic{k}.plotColor = 'r';
+            
     % Now the values were in percent, easier to scale to 0:1 for
     % following computations
     for i = 1 : length(filters.emissionDichroic)

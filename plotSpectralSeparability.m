@@ -45,7 +45,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         for legSt = 1 : length(channelMatrix.filtersUsed)
             legStr{legSt} = channelMatrix.filtersUsed{legSt}.legendString;
         end
-        legStr % TODO, contains extra entry?
+        % legStr % TODO, contains extra entry?
         leg(ind) = legend(legStr);        
             legend('boxoff');
         title('Filters/Channels, k of X_i_j_k')
@@ -75,6 +75,6 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         set(p{filterInd}(i), 'Color', channelMatrix.plotColor(i,:))
     end
     
-    % export_fig(fullfile('figuresOut', 'Xijk_plot.png'), '-r200', '-a1')
+    export_fig(fullfile('figuresOut', 'XijkBasisVectors_plot.png'), '-r200', '-a1')
         
     

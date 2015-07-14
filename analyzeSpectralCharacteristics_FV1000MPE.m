@@ -67,8 +67,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         excitationMatrix = getDataMatrix(lightSources, wavelength, lightsWanted, 'light', [], normalizeOn);
         
         % Fluorophores
-        fluorophoresWanted = {'BV421'; 'OGB-1'; 'SR-101'; 'AlexaFluor633'};
-        absType = '2PM'; % or '1PM'
+        fluorophoresWanted = {'BV421'; 'OGB-1'; 'SR-101'; 'AlexaFluor633'};        
         yType = 'emission';
         fluoroEmissionMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);
         yType = 'excitation';
@@ -76,12 +75,13 @@ function analyzeSpectralCharacteristics_FV1000MPE()
                 
         % Channels 
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};
+        barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4
         channelMatrix.data = zeros(length(wavelength), length(channelsWanted));
         for ch = 1 : length(channelsWanted)           
             % this function will combine the spectral sensitivities of the filters
             % (emission, dichroic mirrors, barrier filters etc.) with the
             % spectral sensitivity of the PMT
-            [channelMatrix.data(:,ch), plotColor, filtersUsed] = getChannelSpectralSensitivity(channelsWanted{ch}, ch, length(channelsWanted), wavelength, filters, PMTs, normalizeOn);            
+            [channelMatrix.data(:,ch), plotColor, filtersUsed] = getChannelSpectralSensitivity(channelsWanted{ch}, ch, length(channelsWanted), barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);            
             channelMatrix.name{ch} = channelsWanted{ch};
             channelMatrix.plotColor(ch,:) = plotColor;
             channelMatrix.filtersUsed{ch} = filtersUsed;
@@ -90,28 +90,29 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         % compute the spectral separability matrix, X_{ijk} 
         % e.g. Fig 3 of Oheim et al. (2014), http://dx.doi.org/10.1016/j.bbamcr.2014.03.010        
         % the give the corresponding channels
-        fluorophoreIndices = [2 3 4]; % manual now, maybe add some automagic later
-        Xijk = computeSpectralSeparabilityMatrix(excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, fluorophoreIndices, channelMatrix, 'specificity');
+        fluorophoreIndices = []; % manual now, maybe add some automagic later
+        Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, fluorophoreIndices, barrierFilterWanted, filters, channelMatrix, 'specificity', normalizeOn);
               
         % as well as the E_{ijk} for relative brightness values (that takes
         % into account the molecular brightness and absolute fluorescence
         % collected fraction, for some details see Oheim et al. (2014), and
         % wait for the upcoming "M. Oheim, M. van't Hoff, Xijk — a figure of merit 
         % and software tool for evaluating spectral cross-talk in multi-channel fluorescence,"
-        Eijk = computeSpectralSeparabilityMatrix(excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, fluorophoreIndices, channelMatrix, 'relative');
+        Eijk = computeSpectralSeparabilityMatrix(wavelength,excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, fluorophoreIndices, barrierFilterWanted, filters, channelMatrix, 'relative', normalizeOn);
         
         
     %% Plot spectral separability analysis
     
         options = [];
         
+        %{
         fig5 = figure('Color', 'w', 'Name', 'Spectral Separability Basis Vectors');
         plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
-        
+                
         fig6 = figure('Color', 'w', 'Name', 'Xijk');
         upscaleFactor = 100;
-        plotXijkAsImage(fig6, scrsz, Xijk, upscaleFactor, fluoroEmissionMatrix, channelMatrix)
-        
+        plotXijkAsImage(fig6, scrsz, Xijk, upscaleFactor, fluoroEmissionMatrix, channelMatrix)        
+        %}
         
         fig7 = figure('Color', 'w', 'Name', 'Xijk (Spectra)');
         plotXijkSpectra(fig7, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
