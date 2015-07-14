@@ -70,22 +70,44 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
     % debugMatrices
     debugPlot = true;
     
+    
+    
     for i = 1 : noOfLightSources        
         for j = 1 : noOfFluorophores            
             for k = 1 : noOfChannels
                 
                 % convert NaNs to zeros
-                excitationLaser.data(isnan(excitationLaser.data(:,i)),i) = 0;
-                fluoroExcitation.data(isnan(fluoroExcitation.data(:,j)),j) = 0;
-                fluoroEmission.data(isnan(fluoroEmission.data(:,j)),j) = 0;
-                channelMatrix.data(isnan(channelMatrix.data(:,k)),k) = 0;
+                excitationLaser.data(:,i) = removeNaNs(excitationLaser.data(:,i), 'laser');
+                fluoroExcitation.data(:,j) = removeNaNs(fluoroExcitation.data(:,j), 'excitation');
+                fluoroEmission.data(:,j) = removeNaNs(fluoroEmission.data(:,j), 'emission');
+                channelMatrix.data(:,k) = removeNaNs(channelMatrix.data(:,k), 'channel');
                 
                 % debug variables
+                if nansum(fluoroExcitation.data(:,j)) == 0
+                    warning(['fluorophore ', fluoroExcitation.name{j}, ' does not have any excitation data'])
+                    disp('Assuming now that it has the excitation spectrum of its neighbor')
+                    disp('For more-or-less idea of the emission then')
+                    if noOfChannels > 1
+                        if j > 1 % take the previous
+                            fluoroExcitation.data(:,j) = fluoroExcitation.data(:,j-1);
+                            disp([' .. used the excitation spectrum of ', fluoroExcitation.name{j-1}])
+                        else % take the next one
+                            fluoroExcitation.data(:,j) = fluoroExcitation.data(:,j+1);
+                            disp([' .. used the excitation spectrum of ', fluoroExcitation.name{j+1}])
+                        end    
+                        fluoroExcitation.data(:,j) = removeNaNs(fluoroExcitation.data(:,j), 'excitation');
+                    else
+                        disp('only one channel, cannot guess the excitation spectrum')
+                    end
+                end
                 excitationOfFluorophoreVector(i,j,k,:) = excitationLaser.data(:,i) .* fluoroExcitation.data(:,j);
                 
                 % not exactly correct at this point (but okay to start with
                 % as an estimate)
                 excitationOfFluorophoreScalar(i,j,k) = trapz(excitationOfFluorophoreVector(i,j,k,:));
+                if isnan(excitationOfFluorophoreScalar(i,j,k))
+                    warning('BUG | Scaling scalar for of excitation is NaN, will give erroneous estimates')
+                end
                 
                 % scale the emission with this estimate scalar
                 emissionOfFluorophoreVector(i,j,k,:) = excitationOfFluorophoreScalar(i,j,k) .* fluoroEmission.data(:,j);
@@ -99,7 +121,23 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
                 Xijk(i,j,k) = nmRes * trapz(squuezedEmissionVector .* channelMatrix.data(:,k));
                 
                 if debugPlot
-                    % [i j k]
+                    if j == 1 
+                        %{
+                        [i j k]
+                        figure
+                        fluoroExcitation.name{j} 
+                        excitationOfFluorophoreScalar(i,j,k)
+                        hold on
+                        plot(squuezedEmissionVector, 'r')
+                        plot(fluoroEmission.data(:,j), 'k')
+                        plot(squeeze(excitationOfFluorophoreVector(i,j,k,:)), 'g')
+                        hold off
+                        % plot(squuezedEmissionVector, 'b')
+                        % channelMatrix.data(:,k)
+                        title(num2str(k))
+                        pause
+                        %}
+                    end
                     plot_Xijk_debugPerIteration()
                 end
             end            
@@ -121,10 +159,18 @@ function Xijk = computeSpectralSeparabilityMatrix(excitationLaser, fluoroEmissio
     
     % remove NaNs
     Xijk(isnan(Xijk)) = 0;
-    
+    Xijk
     
     plotXijkAsImage(Xijk, 100, fluoroEmission, channelMatrix)
     
+    function vectorOut = removeNaNs(vectorIn, dataType)
+        
+        vectorOut = vectorIn;
+        vectorOut(isnan(vectorIn)) = 0;
+        
+        noNansIn = length(find(isnan(vectorIn)))
+        noNansOut = length(find(isnan(vectorOut)))
+        
     
     function plot_Xijk_debugPerIteration()
         % add later stuff

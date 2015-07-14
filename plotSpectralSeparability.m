@@ -46,7 +46,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         for legSt = 1 : length(channelMatrix.filtersUsed)
             legStr{legSt} = channelMatrix.filtersUsed{legSt}.legendString;
         end
-        legStr
+        legStr % TODO, contains extra entry?
         leg(ind) = legend(legStr);        
             legend('boxoff');
         title('Filters/Channels, k of X_i_j_k')
