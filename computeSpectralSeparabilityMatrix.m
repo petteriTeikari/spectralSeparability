@@ -5,9 +5,6 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
     % Separability Index X_{ijk} and later also the relative brightness
     % variant E_{ijk}
 
-    % get barrier filter
-    filtersWantedEmission = {'BA420-460'};
-            
     
     % Based on:
     % ---------

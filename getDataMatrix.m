@@ -26,7 +26,7 @@
     end
 
     for i = 1 : length(data)
-        data{i}
+        % data{i}
         names{i,1} = data{i}.name; % might be unnecessary
         dataIn{i} = data{i}.(yFieldName);
         wavelengthIn{i} = data{i}.wavelength;
