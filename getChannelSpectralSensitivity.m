@@ -101,7 +101,9 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
         % have something weird happening, e.g.   
         channelVector = filterEmission.data .* filterDichroic.data .* PMT.data;
         filtersUsed.emission = filtersWantedEmission;
+        filtersUsed.emissionData = filterEmission.data;
         filtersUsed.dichroic = filtersWantedDichroic;
+        filtersUsed.dichroicData = filterDichroic.data;
         
         % for easier plotting later, construct the legend string to be displayed    
         filtersUsed.legendString = [channelWanted, ' (', cell2mat(filtersUsed.dichroic), '+', cell2mat(filtersUsed.emission),')'];
@@ -142,7 +144,6 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
                 set(sp(ch), 'XLim', [400 700])
                 
         end
-        
         
     
     

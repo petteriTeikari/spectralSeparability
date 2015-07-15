@@ -121,12 +121,18 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                 % scale the emission with this estimate scalar
                 emissionOfFluorophoreVectorRaw(i,j,k,:) = excitationOfFluorophoreScalar(i,j,k) .* fluoroEmission.data(:,j);
                 
-                % normalize the vector before barrier filter
-                emissionOfFluorophoreVector(i,j,k,:) = emissionOfFluorophoreVectorRaw(i,j,k,:) / max(emissionOfFluorophoreVectorRaw(i,j,k,:));
+                % normalize the vector before barrier and dichroic filters
+                emissionOfFluorophoreVectorNorm(i,j,k,:) = emissionOfFluorophoreVectorRaw(i,j,k,:) / max(emissionOfFluorophoreVectorRaw(i,j,k,:));
+                
+                % we have to correct the emission with the used dichroic
+                % mirror as well                
+                dichroicMirror = channelMatrix.filtersUsed{k}.dichroicData;
+                emissionOfFluorophoreVectorDichroic(i,j,k,:) = squeeze(emissionOfFluorophoreVectorNorm(i,j,k,:)) .* dichroicMirror;                
+                
                 
                 % now filter this emission with the barrier filter (defined
                 % above)
-                emissionVector = squeeze(emissionOfFluorophoreVector(i,j,k,:));                
+                emissionVector = squeeze(emissionOfFluorophoreVectorDichroic(i,j,k,:));                
                 emissionOfFluorophoreVector(i,j,k,:) = emissionVector .* barrierFilter{k};
                     
                     % debug
@@ -135,10 +141,19 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                         legend('emission', 'barrier'); title(num2str(k)); pause(2.0)
                     %}
                 
-                % channelResponse
+                % channelResponse                
                 squuezedEmissionVector = squeeze(emissionOfFluorophoreVector(i,j,k,:)); % remove singleton-dimensions
                 channelResponseVector(i,j,k,:) = squuezedEmissionVector .* channelMatrix.data(:,k);
                 channelResponseScalar(i,j,k) = trapz(squeeze(channelResponseVector(i,j,k,:)));
+                
+                    % NOTE! TODO: Now the dichroic mirror has taken account
+                    % twice (above the emission was corrected with, as well as
+                    % in "getChannelSpectralSensitivity.m", so think later how
+                    % to optimize this!
+                    
+                    % However, this effect should be rather small in
+                    % practice as most of the PMT sensitivity spectrum is
+                    % defined by the "last" emission filter (BAxxx-yyyy)
                 
                 % trapezoidal integration
                 Xijk.emission{i,j,k} = removeNaNs(squuezedEmissionVector, 'finalEmission');

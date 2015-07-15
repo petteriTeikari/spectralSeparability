@@ -85,14 +85,16 @@ function analyzeSpectralCharacteristics_FV1000MPE()
             channelMatrix.name{ch} = channelsWanted{ch};
             channelMatrix.plotColor(ch,:) = plotColor;
             channelMatrix.filtersUsed{ch} = filtersUsed;
-        end        
+        end       
+        
         
         % compute the spectral separability matrix, X_{ijk} 
         % e.g. Fig 3 of Oheim et al. (2014), http://dx.doi.org/10.1016/j.bbamcr.2014.03.010        
         % the give the corresponding channels
         fluorophoreIndices = []; % manual now, maybe add some automagic later
         Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, fluorophoreIndices, barrierFilterWanted, filters, channelMatrix, 'specificity', normalizeOn);
-              
+
+        
         % as well as the E_{ijk} for relative brightness values (that takes
         % into account the molecular brightness and absolute fluorescence
         % collected fraction, for some details see Oheim et al. (2014), and
@@ -103,8 +105,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         
     %% Plot spectral separability analysis
     
-        options = [];
-        
+        options = [];        
         
         fig5 = figure('Color', 'w', 'Name', 'Spectral Separability Basis Vectors');
         plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
