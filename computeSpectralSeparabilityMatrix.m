@@ -189,6 +189,18 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
         Xijk.matrix(:,k) = normChannelResponse;
     end
     
+    % make the sum of each channel 1 (overwrites the previous normalization
+    % uncomment this one if you don't want this
+    for k = 1 : noOfChannels
+        sumOfChannel = sum(Xijk.matrix(:,k));
+        normChannelResponse = Xijk.matrix(:,k) / sumOfChannel;
+        Xijk.matrix(:,k) = normChannelResponse;
+    end
+    
+        % TODO with the sum, it would be easier to optimize the system, and
+        % use the value on the diagonal (with 4x4 matrix) as the value to
+        % optimize.
+    
     % remove NaNs
     Xijk.matrix(isnan(Xijk.matrix)) = 0;
     
