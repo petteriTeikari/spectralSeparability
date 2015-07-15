@@ -204,7 +204,23 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
     % remove NaNs
     Xijk.matrix(isnan(Xijk.matrix)) = 0;
     
+    % TODO (July 15, 2015)
     
+        % Now our 2-PM excitation spectra are in normalized units, and the
+        % differences in brightness / quantum efficiency (GM) is not taken
+        % into account
+        % e.g. normalized sensitivity could be 0.1 for fluorophore X at 900
+        % nm, and 1.0 for fluorophore Y, but still the signal from X can be
+        % a lot brighter and more troublesome when leaking to nearby
+        % channel that uses dim fluorophore
+        
+        % similarly the emission is normalized before dichroic mirror and
+        % barrier filter attenuation. This now has allowed us to analyze
+        % the spectral shape leakage assuming that the brightness from all
+        % the fluorophore is equal (which is not the case). Again the
+        % sidelobe of some fluorophore can be a lot brighter than the
+        % spectral emission peak of some dimmer fluorophore
+        
     
     function vectorOut = removeNaNs(vectorIn, dataType)
         
