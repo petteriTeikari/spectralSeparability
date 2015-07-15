@@ -26,6 +26,11 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         FWHM = 3; % [nm], check whether 10 nm is true for our system, broad for a laser
         lightSources = import_lightSources(wavelength, peakWavelength, FWHM);    
         
+            % TODO, add the computations inside a for-loop so you could
+            % write a simple optimization routine for the laser peak as
+            % well trying to minimize the spectral cross-talk when we have
+            % the brightness information for 2-PM excitation
+        
         % Tissue Absorption
         tissueAttenuation = import_tissueAttenuation(wavelength);
         
@@ -67,7 +72,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         excitationMatrix = getDataMatrix(lightSources, wavelength, lightsWanted, 'light', [], normalizeOn);
         
         % Fluorophores
-        fluorophoresWanted = {'Methoxy-X04'; 'OGB-1'; 'DOX'; 'AlexaFluor633'};        
+        fluorophoresWanted = {'Methoxy-X04'; 'OGB-1'; 'SR-101'; 'AlexaFluor633'};        
         yType = 'emission';
         fluoroEmissionMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);
         yType = 'excitation';
