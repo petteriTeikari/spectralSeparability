@@ -1,6 +1,4 @@
 function plotXijkAsImage(fig, scrsz, Xijk, upscaleFactor, fluoroEmission, channelMatrix)
-        
-    set(fig,  'Position', [0.25*scrsz(3) 0.725*scrsz(4) 0.35*scrsz(3) 0.35*scrsz(4)])
 
     % now we for example 3x4 matrix which will be so tiny when plotted
     XijkImage = imresize(Xijk.matrix, upscaleFactor, 'nearest');

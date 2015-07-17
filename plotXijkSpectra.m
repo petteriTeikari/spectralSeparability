@@ -1,7 +1,5 @@
 function plotXijkSpectra(fig, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
 
-    set(fig,  'Position', [0.4*scrsz(3) 0.02*scrsz(4) 0.60*scrsz(3) 0.60*scrsz(4)])
-
     rows = size(Xijk.matrix,1); 
     cols = size(Xijk.matrix,2); 
     

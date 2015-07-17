@@ -1,8 +1,9 @@
 function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
 
-    set(fig,  'Position', [0.04*scrsz(3) 0.05*scrsz(4) 0.40*scrsz(3) 0.90*scrsz(4)])
-
-    rows = 3; cols = 1;
+    rows = 3; cols = 1;   
+     
+    % correct the y-limits of excitation spectra manually
+    yLimitsExcit = [min(fluoroExcitationMatrix.data(:)) max(fluoroExcitationMatrix.data(:))]
     
     % Excitation (i) : Light Sources
     ind = 1;  excitInd = ind; fluoExcitInd = ind;
@@ -13,7 +14,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         % size(fluoroExcitationMatrix.data)
         
         % p{ind} = plot(wavelength, excitationMatrix.data, wavelength, fluoroExcitationMatrix.data);        
-        ar{ind} = area(wavelength, excitationMatrix.data);
+        ar{ind} = area(wavelength, max(yLimitsExcit) * excitationMatrix.data); % weigh with the max of fluoro excit.
         hold on
         p{ind} = plot(wavelength, fluoroExcitationMatrix.data);
         hold off
@@ -54,9 +55,12 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         
     % style 
     set(sp(1:ind), 'XLim', [350 750], 'YLim', [0 1])
+    set(sp(1), 'YLim', [0 1.02*yLimitsExcit(2)])
     set(sp(1), 'XLim', [700 1100]) % add some switch later
     % set(leg, 'Location', 'NorthEastOutside')
     set(leg, 'FontSize', 7, 'Color', [.3 .3 .3])
+   
+    
     
     % correct colors
     for i = 1 : size(excitationMatrix.data,2)
