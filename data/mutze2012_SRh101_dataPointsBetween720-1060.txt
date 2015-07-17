@@ -1,4 +1,4 @@
-x, y (epsilon_max, kcps)
+wavelength, y (epsilon_max, kcps)
 700,NaN
 701,NaN
 702,NaN

@@ -1,3 +1,4 @@
+wavelength, y (epsilon_max, kcps)
 300,NaN
 301,NaN
 302,NaN
