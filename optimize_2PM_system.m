@@ -13,7 +13,7 @@ function optim = optimize_2PM_system(optim_parameters, ...
     %% OPTIMIZATION SETUP
     
         % visualize the progress
-        visualizeOn = true;
+        visualizeOn = false;
     
         % Parameter to be changed during optimization
         x = [optim_parameters.laser.init ...
@@ -72,12 +72,12 @@ function optim = optimize_2PM_system(optim_parameters, ...
         excitationMatrix = getDataMatrix(lightSources, wavelength, lightsWanted, 'light', [], normalizeOn);
          
         % static definition
-        dichroicsWanted = {'DM485'; 'DM570'}; 
+        % dichroicsWanted = {'DM485'; 'DM570'}; 
         
         % overwrite 
-        %dichroicsWanted{1} = ['synthDM_', num2str(DM1cut)]; % DM1
-        %dichroicsWanted{2} = ['synthDM_', num2str(DM2cut)]; % DM2
-             
+        dichroicsWanted{1} = ['synthDM_', num2str(DM1cut)]; % DM1
+        dichroicsWanted{2} = ['synthDM_', num2str(DM2cut)]; % DM2
+        
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};        
         barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4
         channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
@@ -86,23 +86,26 @@ function optim = optimize_2PM_system(optim_parameters, ...
                     fluorophoreIndices, barrierFilterWanted, filters, channelMatrix, matrixType, normalizeOn);
     
         [XijkDiag, kcps] = getDiagonals(Xijk.matrix, Xijk.excitationScalar);
+        disp(XijkDiag)
+        disp(kcps)
     
         % minimize 
         XijkDiag = XijkDiag - 1;
         
         % actually we minimize sum of squares (residuals)
-        SS = sum(XijkDiag .^ 2);
+        SS = sum(XijkDiag(2:end) .^ 2); % manual exclusion of blue channel
         
+        % TODO: init, and update the values (a lot faster
+        visualizeOn = true
         if visualizeOn
-            plot(wavelength, channelMatrix.filtersUsed{2}.dichroicData, ...
+            plot(wavelength, channelMatrix.filtersUsed{1}.dichroicData, ...
                  wavelength, channelMatrix.filtersUsed{4}.dichroicData, ...
                  wavelength, excitationMatrix.data)
-            legend(['DM1, ', num2str(x(2)), ' nm'], ...
-                   ['DM2, ', num2str(x(3)), ' nm'], ...
-                   ['Laser, ', num2str(x(1)), ' nm'])
+            
+            %legend(['DM1 ch1, ', num2str(x(2)), ' nm'], ['DM2 ch4, ', num2str(x(3)), ' nm'], [Laser, ', num2str(x(1)), ' nm'])
             title(['SS = ', num2str(SS)])
             drawnow
-            pause
+            pause(0.2)
         end
         
     %% SUBFUNCTION for COST FUNCTION 

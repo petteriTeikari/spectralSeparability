@@ -22,6 +22,5 @@ function channelMatrix = getChannelWrapper(channelsWanted, noOfchannelsWanted, d
             title(ch)
             hold on
             pause(1)
-        end
-        
+        end        
     end

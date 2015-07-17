@@ -7,6 +7,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
     % to remove the old definitons.
 
     % barrierFilterWanted % better to use when computing the Xijk
+    % dichroicsWanted
  
     %% CHANNEL-SPECIFIC 
     
@@ -111,11 +112,15 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
         
         % for easier plotting later, construct the legend string to be displayed    
         filtersUsed.legendString = [channelWanted, ' (', cell2mat(filtersUsed.dichroic), '+', cell2mat(filtersUsed.emission),')'];
+        % filtersUsed
+        
         
     %% Debug plot
     
         debugPlot = false;
         if debugPlot
+            
+            disp(' DEBUG PLOT from getChannelSpectralSensitivity.m')
             
             if ch == 1
                 scrsz = get(0,'ScreenSize'); % get screen size for plotting    

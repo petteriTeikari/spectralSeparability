@@ -56,8 +56,8 @@
                 cutLambda = str2double(fields{2});                
                 transmittance = import_syntheticDichroicMirror(wavelength, cutLambda);
                 dataIn{i} = transmittance;
-                wavelengthIn{i} = wavelength;
-                ind = 1;
+                wavelengthIn{i} = wavelength;       
+                ind = i; % quick fix, previous lines overwrite the input data
                 
             else
                 disp(names)

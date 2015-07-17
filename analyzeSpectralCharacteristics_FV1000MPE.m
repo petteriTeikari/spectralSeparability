@@ -139,14 +139,14 @@ function analyzeSpectralCharacteristics_FV1000MPE()
             %           the optimization of laser and the dichroic mirrors
         
         % Tunable laser
-        optim_parameters.laser.range = [700 1000];
+        optim_parameters.laser.range = [700 900];
         optim_parameters.laser.init = 800;
         % "short wavelength", by default at 485 or at 505 nm
         optim_parameters.DM1.range = [420 550];
-        optim_parameters.DM1.init = 425;
+        optim_parameters.DM1.init = 485;
         % "long wavelength", by default at 570 nm
         optim_parameters.DM2.range = [520 650];
-        optim_parameters.DM2.init = 630;
+        optim_parameters.DM2.init = 570;
             
         % we want to use the Xijk matrix as the cost function so that the
         % values on diagonal are maximized
