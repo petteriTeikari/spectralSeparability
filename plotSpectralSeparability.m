@@ -3,7 +3,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
     rows = 3; cols = 1;   
      
     % correct the y-limits of excitation spectra manually
-    yLimitsExcit = [min(fluoroExcitationMatrix.data(:)) max(fluoroExcitationMatrix.data(:))]
+    yLimitsExcit = [min(fluoroExcitationMatrix.data(:)) max(fluoroExcitationMatrix.data(:))];
     
     % Excitation (i) : Light Sources
     ind = 1;  excitInd = ind; fluoExcitInd = ind;
@@ -23,7 +23,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
             legend('boxoff');
         title('Light Sources + Excitation Spectra, "i of X_i_j_k"')
         lab(ind,1) = xlabel('Wavelength [nm]');
-        lab(ind,2) = ylabel('Normalized Irradiance/Sensitivity');
+        lab(ind,2) = ylabel('\epsilon_m_a_x (kcps) / Norm. I_S_P_D');
     
     % Fluorophores (j) : Fluorophores
     ind = ind+1; fluoEmisInd = ind;

@@ -74,9 +74,6 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
     % trapezoid resolution
     nmRes = 1; % we don't really have absolute units 
     
-    % debugMatrices
-    debugPlot = true;
-    
     for i = 1 : noOfLightSources        
         for j = 1 : noOfFluorophores            
             for k = 1 : noOfChannels
@@ -118,13 +115,15 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                 % scale the emission with this estimate scalar
                 emissionOfFluorophoreVectorRaw(i,j,k,:) = excitationOfFluorophoreScalar(i,j,k) .* fluoroEmission.data(:,j);
                 
-                % normalize the vector before barrier and dichroic filters
-                emissionOfFluorophoreVectorNorm(i,j,k,:) = emissionOfFluorophoreVectorRaw(i,j,k,:) / max(emissionOfFluorophoreVectorRaw(i,j,k,:));
+                    % TODO: we could keep track the reductions in intensity
+                    % here or later so that the spectra could be normalized
+                    % but still keeping these filtering steps
+                
                 
                 % we have to correct the emission with the used dichroic
                 % mirror as well                
                 dichroicMirror = channelMatrix.filtersUsed{k}.dichroicData;
-                emissionOfFluorophoreVectorDichroic(i,j,k,:) = squeeze(emissionOfFluorophoreVectorNorm(i,j,k,:)) .* dichroicMirror;                
+                emissionOfFluorophoreVectorDichroic(i,j,k,:) = squeeze(emissionOfFluorophoreVectorRaw(i,j,k,:)) .* dichroicMirror;                
                 
                 
                 % now filter this emission with the barrier filter (defined
@@ -154,16 +153,14 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                 
                 % trapezoidal integration
                 Xijk.excitation{i,j,k} = squeeze(excitationOfFluorophoreVector(i,j,k,:));
-                Xijk.excitationScalar{i,j,k} = trapz(Xijk.excitation{i,j,k});
+                Xijk.excitationScalar(i,j,k) = excitationOfFluorophoreScalar(i,j,k);
                 Xijk.emission{i,j,k} = removeNaNs(squuezedEmissionVector, 'finalEmission');
                 Xijk.channel{i,j,k} = removeNaNs(channelMatrix.data(:,k), 'finalChannel');
                 Xijk.response{i,j,k} = Xijk.emission{i,j,k} .* Xijk.channel{i,j,k};
                 Xijk.matrix(i,j,k) = nmRes * trapz(Xijk.response{i,j,k});
-                
+    
+                debugPlot = false;
                 if debugPlot
-                    if j == 1 
-                        
-                    end
                     plot_Xijk_debugPerIteration(wavelength, Xijk.emission{i,j,k}, Xijk.excitation{i,j,k}, Xijk.channel{i,j,k}, Xijk.response{i,j,k}, i, j, k)
                 end
             end            
