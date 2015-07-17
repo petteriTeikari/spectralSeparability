@@ -153,6 +153,8 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                     % defined by the "last" emission filter (BAxxx-yyyy)
                 
                 % trapezoidal integration
+                Xijk.excitation{i,j,k} = squeeze(excitationOfFluorophoreVector(i,j,k,:));
+                Xijk.excitationScalar{i,j,k} = trapz(Xijk.excitation{i,j,k});
                 Xijk.emission{i,j,k} = removeNaNs(squuezedEmissionVector, 'finalEmission');
                 Xijk.channel{i,j,k} = removeNaNs(channelMatrix.data(:,k), 'finalChannel');
                 Xijk.response{i,j,k} = Xijk.emission{i,j,k} .* Xijk.channel{i,j,k};
@@ -162,7 +164,7 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                     if j == 1 
                         
                     end
-                    % plot_Xijk_debugPerIteration(wavelength, Xijk.emission{i,j,k}, Xijk.channel{i,j,k}, Xijk.response{i,j,k}, i, j, k)
+                    plot_Xijk_debugPerIteration(wavelength, Xijk.emission{i,j,k}, Xijk.excitation{i,j,k}, Xijk.channel{i,j,k}, Xijk.response{i,j,k}, i, j, k)
                 end
             end            
         end        
@@ -228,11 +230,11 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
         noNansOut = length(find(isnan(vectorOut)));
         
     
-    function plot_Xijk_debugPerIteration(wavelength, emission, channel, response, i, j, k)
+    function plot_Xijk_debugPerIteration(wavelength, emission, excitation, channel, response, i, j, k)
         
-        plot(wavelength, emission, wavelength, channel, wavelength, response)
+        plot(wavelength, emission, wavelength, excitation, wavelength, channel, wavelength, response)
         title([num2str(i), ', ', num2str(j), ', ', num2str(k)])
-        legend('emission', 'channel', 'response')
+        legend('emission', ['excitation, trapz() = ', num2str(trapz(excitation))], 'channel', 'response')
         pause(0.2)
         
     

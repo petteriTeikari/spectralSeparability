@@ -14,6 +14,10 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
     
     % TODO: Is there a database for all the fluorophores so you could at
     % least retrieve the 1-PM emission/excitation spectra automagically
+    
+    % TODO: Now the 2-PM excitation spectra have different units (GM or
+    % kcps), add a warning about it. They are correlated (according to
+    % Mütze et al. 2012, ) 
 
     %% FLUORESCENT MARKERS (Single-photon Excitation)
 
