@@ -1,4 +1,5 @@
-function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity(channelWanted, ch, noOfChannels, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn)
+function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity(channelWanted, ch, ...
+    noOfChannels, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn)
 
     % Depending on the setup, these might not be so fixed and you could
     % only have these fixed 4 options (RXD1/2/3/4). Add later more if you
@@ -15,7 +16,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
             filtersWantedEmission = {'BA420-460'};
             filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWantedEmission, 'filter', [], normalizeOn);
 
-            filtersWantedDichroic = {'DM485'};
+            filtersWantedDichroic = {dichroicsWanted{1}};
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
 
             % note now, we need to invert the transmittance as it is defined on
@@ -35,7 +36,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
             filtersWantedEmission = {'BA460-510'};
             filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWantedEmission, 'filter', [], normalizeOn);
 
-            filtersWantedDichroic = {'DM485'};
+            filtersWantedDichroic = {dichroicsWanted{1}};
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
 
             % Get this later clarified
@@ -55,7 +56,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
                 %filtersWantedEmission = {'no filter'};
                 %filterEmission.data = ones(length(wavelength), 1);                
 
-            filtersWantedDichroic = {'T635lpxr'}; % 'DM570'
+            filtersWantedDichroic = {dichroicsWanted{2}}; % 'DM570'
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
 
             % note now, we need to invert the transmittance as it is defined on
@@ -79,7 +80,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
                 filtersWantedEmission = {'no filter'};
                 filterEmission.data = ones(length(wavelength), 1); 
 
-            filtersWantedDichroic = {'T635lpxr'}; % 'DM570'
+            filtersWantedDichroic = {dichroicsWanted{2}}; % 'DM570'
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
 
             % filterDichroic.data = 1 - filterDichroic.data;

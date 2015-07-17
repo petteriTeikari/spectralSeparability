@@ -84,18 +84,9 @@ function analyzeSpectralCharacteristics_FV1000MPE()
                 
         % Channels 
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};
+        dichroicsWanted = {'DM485'; 'DM570'}; % double-cell could be fixed at some point
         barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4
-        channelMatrix.data = zeros(length(wavelength), length(channelsWanted));
-        for ch = 1 : length(channelsWanted)           
-            % this function will combine the spectral sensitivities of the filters
-            % (emission, dichroic mirrors, barrier filters etc.) with the
-            % spectral sensitivity of the PMT
-            [channelMatrix.data(:,ch), plotColor, filtersUsed] = getChannelSpectralSensitivity(channelsWanted{ch}, ch, length(channelsWanted), barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);            
-            channelMatrix.name{ch} = channelsWanted{ch};
-            channelMatrix.plotColor(ch,:) = plotColor;
-            channelMatrix.filtersUsed{ch} = filtersUsed;
-        end       
-        
+        channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
         
         % compute the spectral separability matrix, X_{ijk} 
         % e.g. Fig 3 of Oheim et al. (2014), http://dx.doi.org/10.1016/j.bbamcr.2014.03.010        
@@ -115,24 +106,62 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     %% Plot spectral separability analysis
     
         options = [];        
+        plot_XijkResults = false;
         
-        fig5 = figure('Color', 'w', 'Name', 'Spectral Separability Basis Vectors');
-            set(fig5,  'Position', [0.04*scrsz(3) 0.05*scrsz(4) 0.40*scrsz(3) 0.90*scrsz(4)])
-        plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
-                
-        fig6 = figure('Color', 'w', 'Name', 'Xijk');
-            set(fig6,  'Position', [0.65*scrsz(3) 0.725*scrsz(4) 0.35*scrsz(3) 0.35*scrsz(4)])
-        upscaleFactor = 100;
-        plotXijkAsImage(fig6, scrsz, Xijk, upscaleFactor, fluoroEmissionMatrix, channelMatrix)        
-        
-        
-        fig7 = figure('Color', 'w', 'Name', 'Xijk (Spectra)');
-            set(fig7,  'Position', [0.4*scrsz(3) 0.02*scrsz(4) 0.60*scrsz(3) 0.60*scrsz(4)])
-        plotXijkSpectra(fig7, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
+        if plot_XijkResults
+            
+            fig5 = figure('Color', 'w', 'Name', 'Spectral Separability Basis Vectors');
+                set(fig5,  'Position', [0.04*scrsz(3) 0.05*scrsz(4) 0.40*scrsz(3) 0.90*scrsz(4)])
+                plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
+
+            fig6 = figure('Color', 'w', 'Name', 'Xijk');
+                set(fig6,  'Position', [0.65*scrsz(3) 0.725*scrsz(4) 0.35*scrsz(3) 0.35*scrsz(4)])
+                upscaleFactor = 100;
+                plotXijkAsImage(fig6, scrsz, Xijk, upscaleFactor, fluoroEmissionMatrix, channelMatrix)        
+
+
+            fig7 = figure('Color', 'w', 'Name', 'Xijk (Spectra)');
+                set(fig7,  'Position', [0.4*scrsz(3) 0.02*scrsz(4) 0.60*scrsz(3) 0.60*scrsz(4)])
+                plotXijkSpectra(fig7, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
+            
+        end
         
     
+    %% Optimize the system
+    
+        % Above we have used fixed values, but we could want to find
+        % optimal values for:
+        
+            % - Laser peak wavelength
+            % - 2 Dichroic mirrors separating a) RXD1 and RXD2
+            %                                 b) RXD3 and RXD4
+            % - Emission filters (easiest to select manually as well after
+            %           the optimization of laser and the dichroic mirrors
+        
+        % Tunable laser
+        optim_parameters.laser.range = [700 1000];
+        optim_parameters.laser.init = 900;
+        % "short wavelength", by default at 485 or at 505 nm
+        optim_parameters.DM1.range = [420 550];
+        optim_parameters.DM1.init = 485;
+        % "long wavelength", by default at 570 nm
+        optim_parameters.DM2.range = [520 650];
+        optim_parameters.DM2.init = 570;
+            
+        % we want to use the Xijk matrix as the cost function so that the
+        % values on diagonal are maximized
+        optim = optimize_2PM_system(optim_parameters, ...
+                            wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, ...
+                            fluorophoreIndices, barrierFilterWanted, filters, channelMatrix, 'specificity', normalizeOn);
+    
+                        
     %% Spectral unmixing 
     
+        % We could do just blind source separation for the channels
+        % afterwards, and in this script determine the setup parameters
+        % that maximally separate the fluorophores from each other so that
+        % it is the easiest to do the post-processing
+    
         % placeholder now, to be implemented later
-        out = computeSpectralMixing(excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options);
+        % out = computeSpectralMixing(excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options);
         
