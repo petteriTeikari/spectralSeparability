@@ -84,7 +84,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
                 
         % Channels 
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};
-        dichroicsWanted = {'DM485'; 'DM570'}; % double-cell could be fixed at some point
+        dichroicsWanted = {'DM485'; 'DM570'};
         barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4
         channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
         
@@ -140,19 +140,19 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         
         % Tunable laser
         optim_parameters.laser.range = [700 1000];
-        optim_parameters.laser.init = 900;
+        optim_parameters.laser.init = 800;
         % "short wavelength", by default at 485 or at 505 nm
         optim_parameters.DM1.range = [420 550];
-        optim_parameters.DM1.init = 485;
+        optim_parameters.DM1.init = 425;
         % "long wavelength", by default at 570 nm
         optim_parameters.DM2.range = [520 650];
-        optim_parameters.DM2.init = 570;
+        optim_parameters.DM2.init = 630;
             
         % we want to use the Xijk matrix as the cost function so that the
         % values on diagonal are maximized
         optim = optimize_2PM_system(optim_parameters, ...
                             wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, ...
-                            fluorophoreIndices, barrierFilterWanted, filters, channelMatrix, 'specificity', normalizeOn);
+                            fluorophoreIndices, barrierFilterWanted, filters, channelMatrix, 'specificity', normalizeOn, PMTs);
     
                         
     %% Spectral unmixing 

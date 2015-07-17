@@ -7,7 +7,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
     % to remove the old definitons.
 
     % barrierFilterWanted % better to use when computing the Xijk
-    
+ 
     %% CHANNEL-SPECIFIC 
     
         if strcmp(channelWanted, 'RXD1') % VIOLET (420-460 nm)
@@ -18,7 +18,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
 
             filtersWantedDichroic = {dichroicsWanted{1}};
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
-
+                   
             % note now, we need to invert the transmittance as it is defined on
             % disk as passing the longer wavelength through
             filterDichroic.data = 1 - filterDichroic.data;
@@ -58,7 +58,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
 
             filtersWantedDichroic = {dichroicsWanted{2}}; % 'DM570'
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
-
+           
             % note now, we need to invert the transmittance as it is defined on
             % disk as passing the longer wavelength through
             filterDichroic.data = 1 - filterDichroic.data;
@@ -100,6 +100,9 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
     
         % now just multiply the components, add "ones"-vectors if only channel
         % have something weird happening, e.g.   
+        % size(filterEmission.data)
+        % size(filterDichroic.data)
+        % size(PMT.data)
         channelVector = filterEmission.data .* filterDichroic.data .* PMT.data;
         filtersUsed.emission = filtersWantedEmission;
         filtersUsed.emissionData = filterEmission.data;

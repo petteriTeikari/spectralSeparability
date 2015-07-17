@@ -1,5 +1,7 @@
  function dataOut = getDataMatrix(data, wavelength, dataWanted, dataType, yType, normalizeOn)
-        
+ 
+    % dataWanted
+ 
     if strcmp(dataType, 'fluoro')
         
         if strcmp(yType, 'emission')
@@ -17,6 +19,7 @@
         yFieldName = 'transmittance';
         
         normalizeOnForThisData = normalizeOn.(dataType);
+       
     
     elseif strcmp(dataType, 'light')
         yFieldName = 'irradiance';
@@ -44,12 +47,29 @@
         try
             ind(j) = find(ismember(names, dataWanted{j}));
         catch err
-            warning(['You wanted "', num2str(dataWanted{j}), '" but it was not defined. These were found:'])
-            disp(names)
+            
+            % special occasion when you want a synthetic dichroic mirror
+            if ~isempty(strfind(dataWanted{j}, 'synthDM'))
+                
+                % parse input string
+                fields = textscan(dataWanted{j}, '%s%s', 'Delimiter', '_');
+                cutLambda = str2double(fields{2});                
+                transmittance = import_syntheticDichroicMirror(wavelength, cutLambda);
+                dataIn{i} = transmittance;
+                wavelengthIn{i} = wavelength;
+                ind = 1;
+                
+            else
+                disp(names)
+                error(['You wanted "', num2str(dataWanted{j}), '" but it was not defined. These were found:'])            
+            end
         end
     end
     
     % remove the not-found indices
+    % ind = logical(ind);
+    % dataWanted
+    % ind
     ind = ind(ind ~= 0);
 
     % truncate the fluorophore matrix (if needed), a bit of a hassle
@@ -60,7 +80,7 @@
     wavelength_new = (min(wavelength) : wavelengthRes : max(wavelength))';
 
         dataNew = zeros(length(wavelength), length(dataIn));
-        for ji = 1 : length(dataIn) % how many fluorophores
+        for ji = 1 : length(dataIn) % how many fluorophores e.g.
             % easier variable names for debugging (the changes in import_
             % functions often propagate here apparently)
             x = wavelengthIn{ji};
@@ -84,9 +104,7 @@
     
     % output the actual data as well    
     dataOut.data = matrixOut;
-    
-
-    % TODO: Propagate the colors as well    
-    
+      
+  
             
    
