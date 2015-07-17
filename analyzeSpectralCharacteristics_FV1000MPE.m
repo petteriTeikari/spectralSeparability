@@ -65,7 +65,11 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     
         % this requires three 2D matrices (has to be the same length as the
         % wavelength vector        
-        normalizeOn = true; % normalize now everything
+        normalizeOn.light = true;
+        normalizeOn.excitation = false;
+        normalizeOn.emission = true;
+        normalizeOn.filter = true;
+        normalizeOn.PMT = true;
         
         % Light source
         lightsWanted = {'Laser'}; % {'1PMequivalent'};
@@ -113,14 +117,17 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         options = [];        
         
         fig5 = figure('Color', 'w', 'Name', 'Spectral Separability Basis Vectors');
+            set(fig5,  'Position', [0.04*scrsz(3) 0.05*scrsz(4) 0.40*scrsz(3) 0.90*scrsz(4)])
         plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
                 
         fig6 = figure('Color', 'w', 'Name', 'Xijk');
+            set(fig6,  'Position', [0.65*scrsz(3) 0.725*scrsz(4) 0.35*scrsz(3) 0.35*scrsz(4)])
         upscaleFactor = 100;
         plotXijkAsImage(fig6, scrsz, Xijk, upscaleFactor, fluoroEmissionMatrix, channelMatrix)        
         
         
         fig7 = figure('Color', 'w', 'Name', 'Xijk (Spectra)');
+            set(fig7,  'Position', [0.4*scrsz(3) 0.02*scrsz(4) 0.60*scrsz(3) 0.60*scrsz(4)])
         plotXijkSpectra(fig7, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
         
     

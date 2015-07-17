@@ -4,8 +4,10 @@
         
         if strcmp(yType, 'emission')
             yFieldName = 'emission';
+            normalizeOnForThisData = normalizeOn.(yFieldName);
         elseif strcmp(yType, 'excitation')
             yFieldName = 'excitation';
+            normalizeOnForThisData = normalizeOn.(yFieldName);
         else
             disp(['yFieldName = ', yFieldname])
             error('What yType you want, emission/excitation?')
@@ -13,12 +15,18 @@
         
     elseif strcmp(dataType, 'filter')
         yFieldName = 'transmittance';
+        
+        normalizeOnForThisData = normalizeOn.(dataType);
     
     elseif strcmp(dataType, 'light')
         yFieldName = 'irradiance';
         
+        normalizeOnForThisData = normalizeOn.(dataType);
+        
     elseif strcmp(dataType, 'PMT')
         yFieldName = 'sensitivity';
+        
+        normalizeOnForThisData = normalizeOn.(dataType);
         
     else
         disp(['dataType = ', dataType])
@@ -69,7 +77,7 @@
         dataOut.plotColor(k,:) = data{ind(k)}.plotColor;
         dataOut.name{k} = data{ind(k)}.name;
         
-        if normalizeOn
+        if normalizeOnForThisData
             matrixOut(:,k) = matrixOut(:,k) / max(matrixOut(:,k));
         end
     end

@@ -62,6 +62,14 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.name = 'SR-101';
             fluoro{ind}.plotColor = [0.5 0.1 0.15];
             
+        % Red alternative for SR-101
+        
+            % Kim D, Moon H, Baik SH, Singha S, Jun YW, Wang T, Kim KH, Park BS, Jung J, Mook-Jung I, Ahn KH. 2015. 
+            % Two-Photon Absorbing Dyes with Minimal Autofluorescence in Tissue Imaging: Application to in Vivo Imaging of Amyloid-β Plaques with a Negligible Background Signal. 
+            % J. Am. Chem. Soc. 137:6781–6789. 
+            % http://dx.doi.org/10.1021/jacs.5b03548.
+
+            
         % Doxyrubicin
 
             % Karukstis KK, Thompson EHZ, Whiles JA, Rosenfeld RJ. 1998. 
