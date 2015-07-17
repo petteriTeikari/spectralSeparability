@@ -84,9 +84,10 @@ function analyzeSpectralCharacteristics_FV1000MPE()
                 
         % Channels 
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};
+        emissionFiltWanted = {'BA420-460'; 'BA460-510'; 'BA570-625HQ'; 'BA570-625HQ'};
         dichroicsWanted = {'DM485'; 'DM570'};
         barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4
-        channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
+        channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), emissionFiltWanted, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
         
         % compute the spectral separability matrix, X_{ijk} 
         % e.g. Fig 3 of Oheim et al. (2014), http://dx.doi.org/10.1016/j.bbamcr.2014.03.010        
@@ -141,12 +142,31 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         % Tunable laser
         optim_parameters.laser.range = [700 900];
         optim_parameters.laser.init = 800;
+        
         % "short wavelength", by default at 485 or at 505 nm
         optim_parameters.DM1.range = [420 550];
         optim_parameters.DM1.init = 485;
         % "long wavelength", by default at 570 nm
         optim_parameters.DM2.range = [520 650];
-        optim_parameters.DM2.init = 570;
+        optim_parameters.DM2.init = 620;
+        
+        % Barrier filter
+        optim_parameters.BF.range = [480 600];
+        optim_parameters.BF.init = 560;
+        
+        % RXD1 - emission (center wavelength, fixed width)
+        optim_parameters.RXD1emission.range = [optim_parameters.DM1.range(1) optim_parameters.DM1.range(2)]; % for center
+        optim_parameters.RXD1emission.init = 440; 
+        % RXD2 - emission (center wavelength, fixed width)
+        optim_parameters.RXD2emission.range = [optim_parameters.DM1.range(1) optim_parameters.DM1.range(2)];
+        optim_parameters.RXD2emission.init = 485;
+        % RXD3 - emission (center wavelength, fixed width)
+        optim_parameters.RXD3emission.range = [optim_parameters.DM2.range(1) optim_parameters.DM2.range(2)];
+        optim_parameters.RXD3emission.init = 600;
+        % RXD4 - emission (center wavelength, fixed width)
+        optim_parameters.RXD4emission.range = [optim_parameters.DM2.range(1) optim_parameters.DM2.range(2)];
+        optim_parameters.RXD4emission.init = 610;
+        
             
         % we want to use the Xijk matrix as the cost function so that the
         % values on diagonal are maximized

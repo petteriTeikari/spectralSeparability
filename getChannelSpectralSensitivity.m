@@ -1,5 +1,5 @@
-function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity(channelWanted, ch, ...
-    noOfChannels, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn)
+function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity(channelWanted, ch, noOfchannelsWanted, ...
+            emissionFiltWanted, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn)
 
     % Depending on the setup, these might not be so fixed and you could
     % only have these fixed 4 options (RXD1/2/3/4). Add later more if you
@@ -9,12 +9,18 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
     % barrierFilterWanted % better to use when computing the Xijk
     % dichroicsWanted
  
+    % TODO: simplify the use of cells, remove double-cells at some point
+    
     %% CHANNEL-SPECIFIC 
     
         if strcmp(channelWanted, 'RXD1') % VIOLET (420-460 nm)
 
+            filters
+            
+            filters.emissionFilter
+            
             % Microscope filters
-            filtersWantedEmission = {'BA420-460'};
+            filtersWantedEmission = {emissionFiltWanted{1}};
             filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWantedEmission, 'filter', [], normalizeOn);
 
             filtersWantedDichroic = {dichroicsWanted{1}};
@@ -34,7 +40,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
         elseif strcmp(channelWanted, 'RXD2') % GREEN (495-540 nm)
 
             % Microscope filters
-            filtersWantedEmission = {'BA460-510'};
+            filtersWantedEmission = {emissionFiltWanted{2}};
             filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWantedEmission, 'filter', [], normalizeOn);
 
             filtersWantedDichroic = {dichroicsWanted{1}};
@@ -50,7 +56,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
         elseif strcmp(channelWanted, 'RXD3') % LONG-PASS (380-560 nm)
 
             % Microscope filters
-            filtersWantedEmission = {'BA570-625HQ'};
+            filtersWantedEmission = {emissionFiltWanted{3}};
             filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWantedEmission, 'filter', [], normalizeOn);
             
                 % no filter
@@ -74,7 +80,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
         elseif strcmp(channelWanted, 'RXD4') % RED (575-630 nm)
 
             % Microscope filters
-            filtersWantedEmission = {'BA570-625HQ'};
+            filtersWantedEmission = {emissionFiltWanted{4}};
             filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWantedEmission, 'filter', [], normalizeOn);
             
                 % no filter

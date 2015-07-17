@@ -1,4 +1,5 @@
-function channelMatrix = getChannelWrapper(channelsWanted, noOfchannelsWanted, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn)
+function channelMatrix = getChannelWrapper(channelsWanted, noOfchannelsWanted, emissionFiltWanted, ...
+                        dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn)
 
     channelMatrix.data = zeros(length(wavelength), noOfchannelsWanted);
     for ch = 1 : length(channelsWanted)           
@@ -8,7 +9,7 @@ function channelMatrix = getChannelWrapper(channelsWanted, noOfchannelsWanted, d
         % spectral sensitivity of the PMT
         [channelMatrix.data(:,ch), plotColor, filtersUsed] = ...
             getChannelSpectralSensitivity(channelsWanted{ch}, ch, noOfchannelsWanted, ...
-            dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);  
+            emissionFiltWanted, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);  
                 
         channelMatrix.name{ch} = channelsWanted{ch};
         channelMatrix.plotColor(ch,:) = plotColor;
