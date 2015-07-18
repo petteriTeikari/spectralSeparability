@@ -21,7 +21,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         legStr = [excitationMatrix.name; fluoroExcitationMatrix.name'];
         leg(ind) = legend(legStr);
             legend('boxoff');
-        title('Light Sources + Excitation Spectra, "i of X_i_j_k"')
+        tit(ind) = title('Light Sources + Excitation Spectra, "i of X_i_j_k"');
         lab(ind,1) = xlabel('Wavelength [nm]');
         lab(ind,2) = ylabel('\epsilon_m_a_x (kcps) / Norm. I_S_P_D');
     
@@ -33,7 +33,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
             % fluoroMatrix.plotColor, add later
         leg(ind) = legend(fluoroEmissionMatrix.name);
             legend('boxoff');
-        title('Fluorophores (emission), j of X_i_j_k')
+        tit(ind) = title('Fluorophores (emission), j of X_i_j_k');
         lab(ind,1) = xlabel('Wavelength [nm]');
         lab(ind,2) = ylabel('Normalized fluorescence');
     
@@ -49,7 +49,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         % legStr % TODO, contains extra entry?
         leg(ind) = legend(legStr);        
             legend('boxoff');
-        title('Filters/Channels, k of X_i_j_k')
+        tit(ind) = title('Filters/Channels, k of X_i_j_k');
         lab(ind,1) = xlabel('Wavelength [nm]');
         lab(ind,2) = ylabel('Normalized sensitivity');
         
@@ -59,7 +59,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
     set(sp(1), 'XLim', [700 1100]) % add some switch later
     % set(leg, 'Location', 'NorthEastOutside')
     set(leg, 'FontSize', 7, 'Color', [.3 .3 .3])
-   
+    
     
     
     % correct colors
@@ -79,6 +79,8 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         set(p{filterInd}(i), 'Color', channelMatrix.plotColor(i,:))
     end
     
-    export_fig(fullfile('figuresOut', 'XijkBasisVectors_plot.png'), '-r200', '-a1')
+    drawnow
+    
+    % export_fig(fullfile('figuresOut', 'XijkBasisVectors_plot.png'), '-r200', '-a1')
         
     
