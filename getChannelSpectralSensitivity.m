@@ -14,10 +14,6 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
     %% CHANNEL-SPECIFIC 
     
         if strcmp(channelWanted, 'RXD1') % VIOLET (420-460 nm)
-
-            filters
-            
-            filters.emissionFilter
             
             % Microscope filters
             filtersWantedEmission = {emissionFiltWanted{1}};
@@ -135,6 +131,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
                 
             end
             
+            noOfChannels = noOfchannelsWanted;
             rows = floor(noOfChannels/2);
             cols = ceil(noOfChannels/2);
             
@@ -159,6 +156,8 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
                 set(sp(ch), 'XLim', [400 700])
                 
         end
+        
+        
         
     
     
