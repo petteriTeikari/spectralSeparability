@@ -11,6 +11,7 @@ function lightSources = import_lightSources(wavelength, peakWavelength, FWHM)
     lightSources{ind}.description = ['MaiTai_', num2str(peakWavelength), '_nm_hbw', num2str(FWHM), 'nm'];
     lightSources{ind}.wavelength = wavelength;
     lightSources{ind}.irradiance = SPD;
+    lightSources{ind}.peak = peakWavelength;
     lightSources{ind}.plotColor = [0 0 0];
     
         % for 2-PM excitation spectra, see e.g.
@@ -34,7 +35,10 @@ function lightSources = import_lightSources(wavelength, peakWavelength, FWHM)
     % quick'n'dirty 1-photon equivalent, same shape but divide the
     % wavelength vector by 2. In practice probably a bit useless this fix.
     % We can just use the original laser SPD and try to find 2-PM
-    % excitation spectra for our probes
+    % excitation spectra for our probes.
+    
+    % there is an additional blue shift with 2PM excitation due to
+    % "vibrational states"
     
     % In practice, the absorption spectrum should get broader with 2-photon
     % excitation compared to 1-photon excitation, but how much?
@@ -42,6 +46,7 @@ function lightSources = import_lightSources(wavelength, peakWavelength, FWHM)
     lightSources{ind}.description = ['MaiTai_1PMequiv', num2str(peakWavelength/2), '_nm_hbw', num2str(FWHM), 'nm'];
     lightSources{ind}.wavelength = wavelength / 2;
     lightSources{ind}.irradiance = SPD; % check the shape later, and hbw when halving the peak
+    lightSources{ind}.peak = peakWavelength / 2;
     lightSources{ind}.plotColor = [0 0 0]; % if you want to get fancy, 
                                            % you could pick the color depending on the peak wavelength here
     

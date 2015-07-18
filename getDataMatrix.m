@@ -24,7 +24,8 @@
     elseif strcmp(dataType, 'light')
         yFieldName = 'irradiance';
         
-        normalizeOnForThisData = normalizeOn.(dataType);
+        normalizeOnForThisData = normalizeOn.(dataType);      
+        
         
     elseif strcmp(dataType, 'PMT')
         yFieldName = 'sensitivity';
@@ -49,12 +50,24 @@
         catch err
             
             % special occasion when you want a synthetic dichroic mirror
-            if ~isempty(strfind(dataWanted{j}, 'synthDM'))
+            if ~isempty(strfind(dataWanted{j}, 'synthDM')) || ~isempty(strfind(dataWanted{j}, 'synthBARRIER'))
                 
                 % parse input string
                 fields = textscan(dataWanted{j}, '%s%s', 'Delimiter', '_');
                 cutLambda = str2double(fields{2});                
                 transmittance = import_syntheticDichroicMirror(wavelength, cutLambda);
+                dataIn{i} = transmittance;
+                wavelengthIn{i} = wavelength;       
+                ind = i; % quick fix, previous lines overwrite the input data
+          
+            % special occasion when you want a synthetic emission filter
+            elseif ~isempty(strfind(dataWanted{j}, 'synthEM'))
+                
+                % parse input string
+                fields = textscan(dataWanted{j}, '%s%s%s', 'Delimiter', '_');
+                centerLambda = str2double(fields{2});                
+                width = str2double(fields{3});    
+                transmittance = import_syntheticEmissionFilter(wavelength, centerLambda, width);
                 dataIn{i} = transmittance;
                 wavelengthIn{i} = wavelength;       
                 ind = i; % quick fix, previous lines overwrite the input data
@@ -104,6 +117,12 @@
     
     % output the actual data as well    
     dataOut.data = matrixOut;
+    
+    % custom adds
+    if strcmp(dataType, 'light')
+        data{ind(k)}
+        dataOut.peak = data{ind(k)}.peak
+    end
       
   
             
