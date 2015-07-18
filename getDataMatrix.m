@@ -118,12 +118,11 @@
     % output the actual data as well    
     dataOut.data = matrixOut;
     
-    % custom adds
-    if strcmp(dataType, 'light')
-        data{ind(k)}
-        dataOut.peak = data{ind(k)}.peak
-    end
-      
-  
-            
-   
+    %% Custom adds
+    
+        if strcmp(dataType, 'light')
+            dataOut.peak = data{ind(k)}.peak; % laser peak wavelength 
+        end
+
+
+

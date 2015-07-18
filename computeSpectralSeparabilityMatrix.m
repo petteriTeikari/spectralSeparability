@@ -160,7 +160,7 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                 Xijk.emission{i,j,k} = removeNaNs(squuezedEmissionVector, 'finalEmission');
                 Xijk.channel{i,j,k} = removeNaNs(channelMatrix.data(:,k), 'finalChannel');
                 Xijk.response{i,j,k} = Xijk.emission{i,j,k} .* Xijk.channel{i,j,k};
-                excitationLaser
+                Xijk.laserPeak = excitationLaser.peak;
                 
                 % the actual Xijk
                 Xijk.matrix(i,j,k) = nmRes * trapz(Xijk.response{i,j,k});

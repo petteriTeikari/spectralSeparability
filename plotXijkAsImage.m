@@ -52,6 +52,6 @@ function plotXijkAsImage(fig, scrsz, Xijk, upscaleFactor, fluoroEmission, channe
     set(t, 'HorizontalAlignment', 'center', 'FontSize', 6)
     set(t(:,:,1), 'FontWeight', 'bold', 'FontSize', 7)
     
-    title('X_i_j_k', 'FontWeight', 'bold', 'FontSize', 11)
+    title(['X_i_j_k, Laser peak = ', num2str(Xijk.laserPeak), ' nm '], 'FontWeight', 'bold', 'FontSize', 11)
     
-    export_fig(fullfile('figuresOut', 'Xijk_ImageMatrix_.png'), '-r200', '-a1')
+    export_fig(fullfile('figuresOut', ['Xijk_ImageMatrix_', num2str(Xijk.laserPeak), '.png']), '-r150', '-a1')
