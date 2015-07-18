@@ -58,7 +58,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
     set(sp(1), 'YLim', [0 1.02*yLimitsExcit(2)])
     set(sp(1), 'XLim', [700 1100]) % add some switch later
     % set(leg, 'Location', 'NorthEastOutside')
-    set(leg, 'FontSize', 7, 'Color', [.3 .3 .3])
+    set(leg, 'FontSize', 7, 'Color', [.3 .3 .3], 'Interpreter', 'none')
     
     
     

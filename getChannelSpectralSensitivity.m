@@ -8,7 +8,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
 
     % barrierFilterWanted % better to use when computing the Xijk
     % dichroicsWanted
-    emissionFiltWanted
+    % emissionFiltWanted
  
     % TODO: simplify the use of cells, remove double-cells at some point
     

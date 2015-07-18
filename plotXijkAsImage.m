@@ -15,7 +15,8 @@ function plotXijkAsImage(fig, scrsz, Xijk, upscaleFactor, fluoroEmission, channe
     xTickLocs = upscaleFactor * (0.5:1:(size(Xijk.matrix,2) - 0.5));
     yTickLocs = upscaleFactor * (0.5:1:(size(Xijk.matrix,1) - 0.5));
     axis on
-    whos
+    
+    % whos
     
     % for text
     yOffset = (yTickLocs(2) - yTickLocs(1)) * 0.15;
