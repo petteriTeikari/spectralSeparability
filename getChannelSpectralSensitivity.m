@@ -44,7 +44,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
 
             % Get this later clarified
-            PMTWanted = {'PMT Ga-As-P'};
+            PMTWanted = {'PMT Ga-As'};
             PMT = getDataMatrix(PMTs, wavelength, PMTWanted, 'PMT', [], normalizeOn);
 
             % color (that matches the color of the sensitivity)        
@@ -68,7 +68,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
             filterDichroic.data = 1 - filterDichroic.data;
 
             % Get this later clarified
-            PMTWanted = {'PMT Ga-As-P'};
+            PMTWanted = {'PMT Ga-As'};
             PMT = getDataMatrix(PMTs, wavelength, PMTWanted, 'PMT', [], normalizeOn);
 
             % color (that matches the color of the sensitivity)        
@@ -120,7 +120,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
         
     %% Debug plot
     
-        debugPlot = true;
+        debugPlot = false;
         if debugPlot
             
             disp(' DEBUG PLOT from getChannelSpectralSensitivity.m')
@@ -148,7 +148,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
                           ['PMT (', cell2mat(PMTWanted), ')'];...
                           ['Channel Out (', channelWanted, ')']};
 
-                leg(ch) = legend(legStr, 'FontSize', 8, 'Location', 'best');
+                leg(ch) = legend(legStr, 'FontSize', 8, 'Location', 'best', 'Interpreter', 'none');
                     legend('boxoff')
                     
                 tit(ch) = title(channelWanted);
