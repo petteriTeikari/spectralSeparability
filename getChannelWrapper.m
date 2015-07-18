@@ -18,6 +18,7 @@ function channelMatrix = getChannelWrapper(channelsWanted, noOfchannelsWanted, e
     
     debugPlot = false;
     if debugPlot        
+        disp(' DEBUG PLOT from getChannelWrapper.m')
         for ch = 1 : length(channelsWanted)   
             plot(wavelength, channelMatrix.filtersUsed{ch}.dichroicData)
             title(ch)
