@@ -8,6 +8,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
 
     % barrierFilterWanted % better to use when computing the Xijk
     % dichroicsWanted
+    emissionFiltWanted
  
     % TODO: simplify the use of cells, remove double-cells at some point
     
@@ -80,8 +81,8 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
             filterEmission = getDataMatrix(filters.emissionFilter, wavelength, filtersWantedEmission, 'filter', [], normalizeOn);
             
                 % no filter
-                filtersWantedEmission = {'no filter'};
-                filterEmission.data = ones(length(wavelength), 1); 
+                %filtersWantedEmission = {'no filter'};
+                %filterEmission.data = ones(length(wavelength), 1); 
 
             filtersWantedDichroic = {dichroicsWanted{2}}; % 'DM570'
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
@@ -119,7 +120,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
         
     %% Debug plot
     
-        debugPlot = false;
+        debugPlot = true;
         if debugPlot
             
             disp(' DEBUG PLOT from getChannelSpectralSensitivity.m')
