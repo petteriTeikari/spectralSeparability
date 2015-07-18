@@ -83,9 +83,12 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                 fluoroExcitation.data(:,j) = removeNaNs(fluoroExcitation.data(:,j), 'excitation');
                 fluoroEmission.data(:,j) = removeNaNs(fluoroEmission.data(:,j), 'emission');
                 channelMatrix.data(:,k) = removeNaNs(channelMatrix.data(:,k), 'channel');
-                barrierFilter{ch} = removeNaNs(barrierFilter{ch}, 'barrier');
+                barrierFilter{k} = removeNaNs(barrierFilter{k}, 'barrier');
                 
-                % debug variables
+                % Note that now the excitation spectrum needs to be taken
+                % from a study/database with 2PM excitation for which the
+                % data is more scarce. You could have a situation where you
+                % now only 1PM-data for your wanted fluorophone
                 if nansum(fluoroExcitation.data(:,j)) == 0
                     warning(['fluorophore ', fluoroExcitation.name{j}, ' does not have any excitation data'])
                     disp('Assuming now that it has the excitation spectrum of its neighbor')
@@ -103,39 +106,38 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                         disp('only one channel, cannot guess the excitation spectrum')
                     end
                 end
+                
+                % Weigh the tabulated excitation spectrum with the laser
+                % that you are using
                 excitationOfFluorophoreVector(i,j,k,:) = excitationLaser.data(:,i) .* fluoroExcitation.data(:,j);
                 
-                % not exactly correct at this point (but okay to start with
-                % as an estimate)
+                % Trapezoidal integration of the estimated excitation as a
+                % scalar (in kcps)
                 excitationOfFluorophoreScalar(i,j,k) = trapz(excitationOfFluorophoreVector(i,j,k,:));
                 if isnan(excitationOfFluorophoreScalar(i,j,k))
                     warning('BUG | Scaling scalar for of excitation is NaN, will give erroneous estimates')
                 end
                 
-                % scale the emission with this estimate scalar
+                % Scale the emission with this estimate scalar
+                % We assume that the shape of the emission does not change
+                % really as a function of excitation intensity
                 emissionOfFluorophoreVectorRaw(i,j,k,:) = excitationOfFluorophoreScalar(i,j,k) .* fluoroEmission.data(:,j);
                 
                     % TODO: we could keep track the reductions in intensity
                     % here or later so that the spectra could be normalized
-                    % but still keeping these filtering steps
-                
-                
+                    % but still keeping these filtering steps?
+                                
                 % we have to correct the emission with the used dichroic
-                % mirror as well                
+                % mirror (DM1 and DM2; separating RXD1/RXD2 and RXD3/RXD4 respectively)
                 dichroicMirror = channelMatrix.filtersUsed{k}.dichroicData;
                 emissionOfFluorophoreVectorDichroic(i,j,k,:) = squeeze(emissionOfFluorophoreVectorRaw(i,j,k,:)) .* dichroicMirror;                
                 
                 
                 % now filter this emission with the barrier filter (defined
-                % above)
+                % above), first "splitter" of the light into 2 arms (1st
+                % with RXD1 and RXD2, and the 2nd RXD3 and RXD4)
                 emissionVector = squeeze(emissionOfFluorophoreVectorDichroic(i,j,k,:));                
                 emissionOfFluorophoreVector(i,j,k,:) = emissionVector .* barrierFilter{k};
-                    
-                    % debug
-                    %{
-                    plot(wavelength, emissionVector, wavelength, barrierFilter{k}, wavelength, squeeze(emissionOfFluorophoreVector(i,j,k,:))); 
-                        legend('emission', 'barrier'); title(num2str(k)); pause(2.0)
-                    %}
                 
                 % channelResponse                
                 squuezedEmissionVector = squeeze(emissionOfFluorophoreVector(i,j,k,:)); % remove singleton-dimensions
@@ -151,21 +153,31 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                     % practice as most of the PMT sensitivity spectrum is
                     % defined by the "last" emission filter (BAxxx-yyyy)
                 
-                % trapezoidal integration
+                % auxiliary outputs
                 Xijk.excitation{i,j,k} = squeeze(excitationOfFluorophoreVector(i,j,k,:));
                 Xijk.excitationScalar(i,j,k) = excitationOfFluorophoreScalar(i,j,k);
+                Xijk.barrierFilter{i,j,k} = barrierFilter{k};
                 Xijk.emission{i,j,k} = removeNaNs(squuezedEmissionVector, 'finalEmission');
                 Xijk.channel{i,j,k} = removeNaNs(channelMatrix.data(:,k), 'finalChannel');
                 Xijk.response{i,j,k} = Xijk.emission{i,j,k} .* Xijk.channel{i,j,k};
+                excitationLaser
+                
+                % the actual Xijk
                 Xijk.matrix(i,j,k) = nmRes * trapz(Xijk.response{i,j,k});
+                Xijk.matrixAbs(i,j,k) = Xijk.matrix(i,j,k);
     
-                debugPlot = false;
+                debugPlot = true;
                 if debugPlot
-                    plot_Xijk_debugPerIteration(wavelength, Xijk.emission{i,j,k}, Xijk.excitation{i,j,k}, Xijk.channel{i,j,k}, Xijk.response{i,j,k}, i, j, k)
+                    % plot_Xijk_debugPerIteration(wavelength, Xijk.emission{i,j,k}, Xijk.excitation{i,j,k}, Xijk.channel{i,j,k}, Xijk.response{i,j,k}, i, j, k)
+                                        
+                    if i == 1 && j == 1 % on every channel show
+                        % plot_debug_Xijk_optimization(wavelength, excitationLaser.data(:,i), dichroicMirror, barrierFilter{k}, fluoroEmission.data, channelMatrix.data(:,k), k)
+                    end
                 end
-            end            
+            end   
         end        
-    end
+    end    
+    
         
     % TODO: if you start having multiple light sources, the current code
     % does not work for that
@@ -229,10 +241,31 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
     
     function plot_Xijk_debugPerIteration(wavelength, emission, excitation, channel, response, i, j, k)
         
+        rows = 4;
+        cols = 4;
+        ind = (k-1)*cols + j;
+        subplot(rows,cols,ind)
+        
         plot(wavelength, emission, wavelength, excitation, wavelength, channel, wavelength, response)
         title([num2str(i), ', ', num2str(j), ', ', num2str(k)])
-        legend('emission', ['excitation, trapz() = ', num2str(trapz(excitation))], 'channel', 'response')
-        pause(0.2)
+        leg = legend('emission', ['excitation, trapz() = ', num2str(trapz(excitation))], 'channel', 'response');
+        set(leg,  'FontSize', 7, 'Location', 'Best')
+        legend('boxoff')
+        drawnow
         
-    
-    
+    function plot_debug_Xijk_optimization(wavelength, laser, dichroicMirror, barrierFilter, fluoroEmission, channelMatrix, k)
+        
+        rows = 2;
+        cols = 2;
+        
+        subplot(rows,cols,k)
+        
+            plot(wavelength, laser, ...
+                 wavelength, barrierFilter, ...
+                 wavelength, dichroicMirror, ...
+                 wavelength, channelMatrix, 'k')
+
+            leg = legend('laser', 'barrier', 'dichroic', 'channel');
+            title(['Channel ', num2str(k)])
+            drawnow
+        
