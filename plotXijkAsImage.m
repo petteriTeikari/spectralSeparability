@@ -1,4 +1,4 @@
-function plotXijkAsImage(fig, scrsz, Xijk, upscaleFactor, fluoroEmission, channelMatrix)
+function plotXijkAsImage(Xijk, upscaleFactor, fluoroEmission, channelMatrix, saveOn)
 
     % now we for example 3x4 matrix which will be so tiny when plotted
     XijkImage = imresize(Xijk.matrix, upscaleFactor, 'nearest');
@@ -56,4 +56,6 @@ function plotXijkAsImage(fig, scrsz, Xijk, upscaleFactor, fluoroEmission, channe
     title(['X_i_j_k, Laser peak = ', num2str(Xijk.laserPeak), ' nm '], 'FontWeight', 'bold', 'FontSize', 11)
     drawnow
     
-    export_fig(fullfile('figuresOut', ['Xijk_ImageMatrix_', num2str(Xijk.laserPeak), '.png']), '-r150', '-a1')
+    if saveOn
+        export_fig(fullfile('figuresOut', ['Xijk_ImageMatrix_', num2str(Xijk.laserPeak), '.png']), '-r150', '-a1')
+    end

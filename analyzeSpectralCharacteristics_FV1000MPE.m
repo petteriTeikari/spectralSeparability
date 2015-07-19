@@ -20,7 +20,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         PMTs = import_SpectralSensitivityPMT(wavelength);
 
         % Laser lines, light sources, etc.
-        peakWavelength = 900; % create synthetically, check whether this is correct!
+        peakWavelength = 860; % create synthetically, check whether this is correct!
                               % Replace maybe with actual in vivo
                               % measurements later
         FWHM = 3; % [nm], check whether 10 nm is true for our system, broad for a laser
@@ -84,8 +84,8 @@ function analyzeSpectralCharacteristics_FV1000MPE()
                 
         % Channels 
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};
-        emissionFiltWanted = {'BA420-460'; 'BA460-510'; 'BA570-625HQ'; 'BA570-625HQ'};
-        dichroicsWanted = {'DM485'; 'DM570'};
+        emissionFiltWanted = {'BA420-460'; 'BA460-510'; 'BA570-625HQ'; 'synthEM_700_50'};
+        dichroicsWanted = {'DM485'; 'synthDM_630'};
         barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4
         channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), emissionFiltWanted, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
         
@@ -108,17 +108,19 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     
         options = [];        
         plot_XijkResults = false;
+        saveOn = false;
         
         if plot_XijkResults
             
             fig5 = figure('Color', 'w', 'Name', 'Spectral Separability Basis Vectors');
                 set(fig5,  'Position', [0.04*scrsz(3) 0.05*scrsz(4) 0.40*scrsz(3) 0.90*scrsz(4)])
                 plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
-
+                
+                
             fig6 = figure('Color', 'w', 'Name', 'Xijk');
                 set(fig6,  'Position', [0.65*scrsz(3) 0.725*scrsz(4) 0.35*scrsz(3) 0.35*scrsz(4)])
                 upscaleFactor = 100;
-                plotXijkAsImage(fig6, scrsz, Xijk, upscaleFactor, fluoroEmissionMatrix, channelMatrix)        
+                plotXijkAsImage(Xijk, upscaleFactor, fluoroEmissionMatrix, channelMatrix, saveOn)        
 
 
             fig7 = figure('Color', 'w', 'Name', 'Xijk (Spectra)');
@@ -130,49 +132,30 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     
     %% Optimize the system
     
-        % Above we have used fixed values, but we could want to find
-        % optimal values for:
-        
-            % - Laser peak wavelength
-            % - 2 Dichroic mirrors separating a) RXD1 and RXD2
-            %                                 b) RXD3 and RXD4
-            % - Emission filters (easiest to select manually as well after
-            %           the optimization of laser and the dichroic mirrors
-        
-        % Tunable laser
-        optim_parameters.laser.range = [700 900];
-        optim_parameters.laser.init = 800;
-        
-        % "short wavelength", by default at 485 or at 505 nm
-        optim_parameters.DM1.range = [420 550];
-        optim_parameters.DM1.init = 485;
-        % "long wavelength", by default at 570 nm
-        optim_parameters.DM2.range = [520 650];
-        optim_parameters.DM2.init = 620;
-        
-        % Barrier filter
-        optim_parameters.BF.range = [480 600];
-        optim_parameters.BF.init = 560;
-        
-        % RXD1 - emission (center wavelength, fixed width)
-        optim_parameters.RXD1emission.range = [optim_parameters.DM1.range(1) optim_parameters.DM1.range(2)]; % for center
-        optim_parameters.RXD1emission.init = 440; 
-        % RXD2 - emission (center wavelength, fixed width)
-        optim_parameters.RXD2emission.range = [optim_parameters.DM1.range(1) optim_parameters.DM1.range(2)];
-        optim_parameters.RXD2emission.init = 485;
-        % RXD3 - emission (center wavelength, fixed width)
-        optim_parameters.RXD3emission.range = [optim_parameters.DM2.range(1) optim_parameters.DM2.range(2)];
-        optim_parameters.RXD3emission.init = 600;
-        % RXD4 - emission (center wavelength, fixed width)
-        optim_parameters.RXD4emission.range = [optim_parameters.DM2.range(1) optim_parameters.DM2.range(2)];
-        optim_parameters.RXD4emission.init = 610;
-        
-            
-        % we want to use the Xijk matrix as the cost function so that the
-        % values on diagonal are maximized
-        optim = optimize_2PM_system(optim_parameters, ...
-                            wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, ...
-                            fluorophoreIndices, barrierFilterWanted, filters, channelMatrix, 'specificity', normalizeOn, PMTs);
+        optimizeThe2PMSystem = true;
+        if optimizeThe2PMSystem 
+    
+            % Above we have used fixed values, but we could want to find
+            % optimal values for:
+
+                % - Laser peak wavelength
+                % - 2 Dichroic mirrors separating a) RXD1 and RXD2
+                %                                 b) RXD3 and RXD4
+                % - Emission filters (easiest to select manually as well after
+                %           the optimization of laser and the dichroic mirrors
+                % - Barrier filter (separates RXD1+RXD2, and RXD3+RXD4)
+
+            % default values, you can either tweak the default values, or
+            % manually overwrite the values that you want to change
+            optim_parameters = optimize_initParameters();
+
+            % we want to use the Xijk matrix as the cost function so that the
+            % values on diagonal are maximized
+            optim = optimize_2PM_system(optim_parameters, ...
+                                wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, ...
+                                fluorophoreIndices, barrierFilterWanted, filters, channelMatrix, 'specificity', normalizeOn, PMTs);
+                            
+        end
     
                         
     %% Spectral unmixing 

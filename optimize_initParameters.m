@@ -1,15 +1,15 @@
 function optim_parameters = optimize_initParameters()
 
     % Tunable laser
-    optim_parameters.laser.range = [700 900];
-    optim_parameters.laser.init = 800;
+    optim_parameters.laser.range = [740 950];
+    optim_parameters.laser.init = 760;
 
     % "short wavelength", by default at 485 or at 505 nm
     optim_parameters.DM1.range = [485 485];
     optim_parameters.DM1.init = 485;
     % "long wavelength", by default at 570 nm
-    optim_parameters.DM2.range = [620 620];
-    optim_parameters.DM2.init = 620;
+    optim_parameters.DM2.range = [630 630];
+    optim_parameters.DM2.init = 630;
 
     % Barrier filter
     optim_parameters.BF.range = [560 560];
@@ -17,7 +17,7 @@ function optim_parameters = optimize_initParameters()
 
     % RXD1 - emission (center wavelength, fixed width)
     optim_parameters.RXD1emission.range = [optim_parameters.DM1.range(1) optim_parameters.DM1.range(2)]; % for center
-    optim_parameters.RXD1emission.init = 440; 
+    optim_parameters.RXD1emission.init = 420; 
     % RXD2 - emission (center wavelength, fixed width)
     optim_parameters.RXD2emission.range = [optim_parameters.DM1.range(1) optim_parameters.DM1.range(2)];
     optim_parameters.RXD2emission.init = 485;
@@ -26,5 +26,5 @@ function optim_parameters = optimize_initParameters()
     optim_parameters.RXD3emission.init = 600;
     % RXD4 - emission (center wavelength, fixed width)
     optim_parameters.RXD4emission.range = [optim_parameters.DM2.range(1) optim_parameters.DM2.range(2)];
-    optim_parameters.RXD4emission.init = 610;
+    optim_parameters.RXD4emission.init = 650;
         

@@ -10,4 +10,4 @@ function transmittance = import_syntheticEmissionFilter(wavelength, centerLambda
     transmittance(minInd:maxInd) = 1;
     
     % smooth a bit to round the edges
-    transmittance = smooth(wavelength, transmittance, 0.02, 'lowess');
+    % transmittance = smooth(wavelength, transmittance, 0.02, 'lowess');
