@@ -308,7 +308,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
         % A two-photon fluorescent probe for amyloid-β plaques in living mice. Chem. Commun. 49:1303–1305. 
         % http://dx.doi.org/10.1039/C2CC38570H.        
         ind2PM = ind2PM + 1;
-        tmp2PM = importdata(fullfile('data','methoxy_2PMexcitation_Heo2013.csv'), ',', 1);
+        tmp2PM = importdata(fullfile('data','methoxy_2PMexcitation_Heo2013_extrapolated.csv'), ',', 1);
             
             fluoro2PM{ind2PM}.wavelength = tmp2PM.data(:,1);
             fluoro2PM{ind2PM}.wavelengthRes = fluoro{ind2PM}.wavelength(2) - fluoro{ind2PM}.wavelength(1);
