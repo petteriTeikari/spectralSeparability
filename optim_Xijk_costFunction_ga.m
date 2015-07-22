@@ -56,7 +56,7 @@ function [x, diagonal] = optim_Xijk_costFunction_ga(x, options)
     % contrast to fmincon which would require computation of sum of squares
     % (difference from diagonal being 1)
         
-    diagonal = sum(XijkDiag(2:3) .^ 2);
+    diagonal = sum(XijkDiag(1:end) .^ 2);
     
     % display    
     debugString = sprintf('%s\t%s\t%s', num2str(length(XijkDiag) - diagonal,3), ' -- ', num2str(x,3));
