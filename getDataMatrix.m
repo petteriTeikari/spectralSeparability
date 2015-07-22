@@ -47,10 +47,16 @@
     for j = 1 : length(dataWanted)
         try
             ind(j) = find(ismember(names, dataWanted{j}));
+            
         catch err
             
+            if isempty(dataWanted{j})
+                
+                % ind(j) = [];                
+                error('empty fields not handled yet, implement at some point')
+            
             % special occasion when you want a synthetic dichroic mirror
-            if ~isempty(strfind(dataWanted{j}, 'synthDM')) || ~isempty(strfind(dataWanted{j}, 'synthBARRIER'))
+            elseif ~isempty(strfind(dataWanted{j}, 'synthDM')) || ~isempty(strfind(dataWanted{j}, 'synthBARRIER'))
                 
                 % parse input string
                 fields = textscan(dataWanted{j}, '%s%s', 'Delimiter', '_');
@@ -72,7 +78,9 @@
                 wavelengthIn{i} = wavelength;       
                 ind = i; % quick fix, previous lines overwrite the input data
                 
+                
             else
+                
                 disp(names)
                 error(['You wanted "', num2str(dataWanted{j}), '" but it was not defined. These were found:'])            
             end
