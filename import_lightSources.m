@@ -58,7 +58,6 @@ function lightSources = import_lightSources(wavelength, peakWavelength, FWHM)
         
         % sigma / deviation of the gaussian is defined as a function of FWHM
         sigma = (FWHM*2) / 2.355; % e.g., http://cp.literature.agilent.com/litweb/pdf/5980-0746E.pdf    
-      
         f = gauss_distribution(wavelength, peakWavelength, sigma);
         SPD = f / max(f); % normalize
         
@@ -66,7 +65,7 @@ function lightSources = import_lightSources(wavelength, peakWavelength, FWHM)
    
         % x         x vector (i.e. wavelength)
         % mu        mean / peak nm
-        % sigma     standard deviation        
+        % sigma     standard deviation     
         p1 = -.5 * ((x - mu)/s) .^ 2;
         p2 = (s * sqrt(2*pi));
         f = exp(p1) ./ p2;  
