@@ -1,0 +1,3 @@
+[submodule "3rdParty/GAOT"]
+	path = 3rdParty/GAOT
+	url = https://github.com/estsauver/GAOT.git
