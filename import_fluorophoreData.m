@@ -64,7 +64,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.excitation = tmpData.data(:,2);
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'SR-101';
-            fluoro{ind}.plotColor = [0.5 0.1 0.15];
+            fluoro{ind}.plotColor = [1 0.1 0.15];
             
         % Red alternative for SR-101
         
@@ -144,6 +144,30 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'Methoxy-X04';
             fluoro{ind}.plotColor = [0 0 1];
+
+        % di-8-ANEPPS, voltage-sensitive dye (VSD)
+        % https://www.lifetechnologies.com/order/catalog/product/D3167
+        
+            % see e.g.
+            % Pucihar G, Kotnik T, Miklavčič D. 2009. 
+            % Measuring the Induced Membrane Voltage with Di-8-ANEPPS. J Vis Exp. 
+            % http://dx.doi.org/10.3791/1659.
+            
+            % Grandy TH, Greenfield SA, Devonshire IM. 2012. 
+            % An evaluation of in vivo voltage-sensitive dyes: 
+            % pharmacological side effects and signal-to-noise ratios after effective 
+            % removal of brain-pulsation artifacts. 
+            % Journal of Neurophysiology 108:2931–2945. 
+            % http://dx.doi.org/10.1152/jn.00512.2011.
+            
+            ind = ind + 1;
+            tmpData = importdata(fullfile('data','Di-4-ANEPPS.csv'), ',', 1);
+            fluoro{ind}.wavelength = tmpData.data(:,1);
+            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);            
+            fluoro{ind}.excitation = tmpData.data(:,2);
+            fluoro{ind}.emission = tmpData.data(:,3);
+            fluoro{ind}.name = 'Di-4-ANEPPS';
+            fluoro{ind}.plotColor = [.4 .2 .1];
 
             
             
@@ -331,6 +355,39 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             end
             fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'emission');
         
+        % di-8-ANEPPS, voltage-sensitive dye (VSD)
+        
+            % 2-PM excitation spectrum from:
+            % Fisher JAN, Salzberg BM, Yodh AG. 2005. 
+            % Near infrared two-photon excitation cross-sections of voltage-sensitive dyes. 
+            % Journal of Neuroscience Methods 148:94–102. 
+            % http://dx.doi.org/10.1016/j.jneumeth.2005.06.027.
+            ind2PM = ind2PM + 1;
+            tmp2PM = importdata(fullfile('data','fisher2005_di-8-ANEPPS_2PMexcitation.csv'), ',', 1);
+            
+            fluoro2PM{ind2PM}.wavelength = tmp2PM.data(:,1);
+            fluoro2PM{ind2PM}.wavelengthRes = fluoro{ind2PM}.wavelength(2) - fluoro{ind2PM}.wavelength(1);
+            fluoro2PM{ind2PM}.excitation = tmp2PM.data(:,2);
+            fluoro2PM{ind2PM}.name = 'Di-4-ANEPPS';
+            fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'excitation');
+            
+            % get the emission spectrum automagically from the
+            % corresponding single-photon one
+            ind_1PM = find(ismember(getNameList(fluoro), fluoro2PM{ind2PM}.name));
+            if isempty(ind_1PM)
+                warning(['no emission data found for fluorophore: "', fluoro2PM{ind2PM}.name, '", is that so or did you have a typo?'])
+                fluoro2PM{ind2PM}.emission = [];
+                fluoro2PM{ind2PM}.plotColor = [0 0 0];
+                fluoro2PM{ind2PM}.wavelength = [];
+            else
+                fluoro2PM{ind2PM}.emission = fluoro{ind_1PM}.emission;
+                fluoro2PM{ind2PM}.plotColor = fluoro{ind_1PM}.plotColor;
+                fluoro2PM{ind2PM}.wavelength = fluoro{ind_1PM}.wavelength;
+            end
+            fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'emission');
+
+        
+      
     %% ERROR HANDLING
     
         % if your delimiter is incorrectly defined, you get
