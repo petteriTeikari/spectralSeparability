@@ -31,7 +31,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.excitation = tmpData.data(:,2);
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'OGB-1';
-            fluoro{ind}.plotColor = [0 1 0];
+            fluoro{ind}.plotColor = [0 0.498 0];
 
         % Texas Red
         % http://www.lifetechnologies.com/ca/en/home/life-science/cell-analysis/fluorophores/texas-red.html
@@ -53,7 +53,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.excitation = tmpData.data(:,2);
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'FITC';
-            fluoro{ind}.plotColor = [0 .6 .2];
+            fluoro{ind}.plotColor = [0.2 1 0.6];
            
         % SR-101 (Chroma)
         % https://www.chroma.com/products/parts/t610lpxr?fluorochromes=10488,10411
@@ -64,7 +64,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.excitation = tmpData.data(:,2);
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'SR-101';
-            fluoro{ind}.plotColor = [1 0.1 0.15];
+            fluoro{ind}.plotColor = [1 0 0.6];
             
         % Red alternative for SR-101
         
@@ -86,7 +86,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.emission = tmpData.data(:,2);
             fluoro{ind}.excitation = zeros(length(fluoro{ind}.emission),1); % no data atm
             fluoro{ind}.name = 'DOX';
-            fluoro{ind}.plotColor = [0.6 0.35 0.85];
+            fluoro{ind}.plotColor = [0.87 0.49 0];
             
         % Qtracker® vascular labels with NIR emission
         % http://www.lifetechnologies.com/ca/en/home/life-science/cell-analysis/cellular-imaging/small-animal-in-vivo-imaging-saivi/qdots-for-in-vivo-applications.html#invivo
@@ -105,7 +105,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.excitation = tmpData.data(:,2);
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'BV421';
-            fluoro{ind}.plotColor = [1 0 1];
+            fluoro{ind}.plotColor = [0 0 1];
         
         % Indo-1 would be a blue Calcium indicator
                    
@@ -129,7 +129,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.excitation = tmpData.data(:,2);
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'AlexaFluor633';
-            fluoro{ind}.plotColor = [1 0 0];
+            fluoro{ind}.plotColor = [0.6 0.2 0];
             
         % Methoxy-X04
         % Heo CH, Kim KH, Kim HJ, Baik SH, Song H, Kim YS, Lee J, Mook-jung I, Kim HM. 2013. 
@@ -143,7 +143,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.excitation = tmpData.data(:,2);
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'Methoxy-X04';
-            fluoro{ind}.plotColor = [0 0 1];
+            fluoro{ind}.plotColor = [0 0.75 0.75];
 
         % di-8-ANEPPS, voltage-sensitive dye (VSD)
         % https://www.lifetechnologies.com/order/catalog/product/D3167
@@ -167,8 +167,32 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.excitation = tmpData.data(:,2);
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'Di-4-ANEPPS';
-            fluoro{ind}.plotColor = [.4 .2 .1];
+            fluoro{ind}.plotColor = [0.4 0.2 0.1];
 
+         % di-8-ANEPPS, voltage-sensitive dye (VSD)
+        % https://www.lifetechnologies.com/order/catalog/product/D3167
+        
+            % see e.g.
+            % Pucihar G, Kotnik T, Miklavčič D. 2009. 
+            % Measuring the Induced Membrane Voltage with Di-8-ANEPPS. J Vis Exp. 
+            % http://dx.doi.org/10.3791/1659.
+            
+            % Grandy TH, Greenfield SA, Devonshire IM. 2012. 
+            % An evaluation of in vivo voltage-sensitive dyes: 
+            % pharmacological side effects and signal-to-noise ratios after effective 
+            % removal of brain-pulsation artifacts. 
+            % Journal of Neurophysiology 108:2931–2945. 
+            % http://dx.doi.org/10.1152/jn.00512.2011.
+            
+            ind = ind + 1;
+            tmpData = importdata(fullfile('data','Di-4-ANEPPS.csv'), ',', 1);
+            fluoro{ind}.wavelength = tmpData.data(:,1);
+            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);            
+            fluoro{ind}.excitation = tmpData.data(:,2);
+            fluoro{ind}.emission = tmpData.data(:,3);
+            fluoro{ind}.name = 'RH1692';
+            fluoro{ind}.plotColor = [0 0 0];
+            
         % Cascade Blue, for vascular labeling
         % https://www.lifetechnologies.com/order/catalog/product/C687?ICID=search-product
         
@@ -179,7 +203,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.excitation = tmpData.data(:,2);
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'CascadeBlue';
-            fluoro{ind}.plotColor = [.1 .3 1];
+            fluoro{ind}.plotColor = [0.514 0.38 0.48];
             
     %% FLUORESCENT MARKERS (Two-photon Excitation)
     
@@ -396,10 +420,49 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             end
             fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'emission');
 
+        % RH1692, voltage-sensitive dye (VSD)
+        
+            % 2-PM excitation spectrum from:
+            % Fisher JAN, Salzberg BM, Yodh AG. 2005. 
+            % Near infrared two-photon excitation cross-sections of voltage-sensitive dyes. 
+            % Journal of Neuroscience Methods 148:94–102. 
+            % http://dx.doi.org/10.1016/j.jneumeth.2005.06.027.
+            ind2PM = ind2PM + 1;
+            tmp2PM = importdata(fullfile('data','fisher2005_RH1692_2PM-excitation.csv'), ',', 1);
+            
+            fluoro2PM{ind2PM}.wavelength = tmp2PM.data(:,1);
+            fluoro2PM{ind2PM}.wavelengthRes = fluoro{ind2PM}.wavelength(2) - fluoro{ind2PM}.wavelength(1);
+            fluoro2PM{ind2PM}.excitation = tmp2PM.data(:,2);
+            fluoro2PM{ind2PM}.name = 'RH1692';
+            fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'excitation');
+            
+            % get the emission spectrum automagically from the
+            % corresponding single-photon one
+            ind_1PM = find(ismember(getNameList(fluoro), fluoro2PM{ind2PM}.name));
+            if isempty(ind_1PM)
+                warning(['no emission data found for fluorophore: "', fluoro2PM{ind2PM}.name, '", is that so or did you have a typo?'])
+                fluoro2PM{ind2PM}.emission = [];
+                fluoro2PM{ind2PM}.plotColor = [0 0 0];
+                fluoro2PM{ind2PM}.wavelength = [];
+            else
+                fluoro2PM{ind2PM}.emission = fluoro{ind_1PM}.emission;
+                fluoro2PM{ind2PM}.plotColor = fluoro{ind_1PM}.plotColor;
+                fluoro2PM{ind2PM}.wavelength = fluoro{ind_1PM}.wavelength;
+            end
+            fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'emission');
+        
+            
         % Cascade Blue
         
             % Graphically from Olympus:
             % http://www.olympusmicro.com/primer/techniques/fluorescence/multiphoton/multiphotonintro.html
+            
+            % Would be also available from (Figure 2):
+            % Xu C, Webb WW. 1996. 
+            % Measurement of two-photon excitation cross sections of molecular fluorophores with data from 690 to 1050 nm. 
+            % Journal of the Optical Society of America B 13:481. 
+            % https://dx.doi.org/10.1364/JOSAB.13.000481.
+            
             ind2PM = ind2PM + 1;
             tmp2PM = importdata(fullfile('data','cascadeBlue_2PM_685-852nm.csv'), ',', 1);
             
