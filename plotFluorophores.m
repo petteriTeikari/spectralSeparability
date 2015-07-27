@@ -26,8 +26,8 @@ function plotFluorophores(fluoro, fig, scrsz, fontSize, fontName)
     lab(2) = ylabel('Normalized emission');
 
     % style
-    set(p, 'LineWidth', 2)
-    set(gca, 'XLim', [300 900], 'FontName', fontName, 'FontSize', fontSize)
+    set(p, 'LineWidth', 1)
+    set(gca, 'XLim', [300 900], 'YLim', [0 1.05], 'FontName', fontName, 'FontSize', fontSize)
     set(lab, 'FontName', fontName, 'FontSize', fontSize)
     set(tit, 'FontName', fontName, 'FontSize', fontSize+1, 'FontWeight', 'bold')
 
