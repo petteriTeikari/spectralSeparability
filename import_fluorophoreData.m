@@ -169,7 +169,17 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.name = 'Di-4-ANEPPS';
             fluoro{ind}.plotColor = [.4 .2 .1];
 
-            
+        % Cascade Blue, for vascular labeling
+        % https://www.lifetechnologies.com/order/catalog/product/C687?ICID=search-product
+        
+            ind = ind + 1;
+            tmpData = importdata(fullfile('data','CascadeBlue.csv'), ',', 1);
+            fluoro{ind}.wavelength = tmpData.data(:,1);
+            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);            
+            fluoro{ind}.excitation = tmpData.data(:,2);
+            fluoro{ind}.emission = tmpData.data(:,3);
+            fluoro{ind}.name = 'CascadeBlue';
+            fluoro{ind}.plotColor = [.1 .3 1];
             
     %% FLUORESCENT MARKERS (Two-photon Excitation)
     
@@ -386,7 +396,34 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             end
             fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'emission');
 
+        % Cascade Blue
         
+            % Graphically from Olympus:
+            % http://www.olympusmicro.com/primer/techniques/fluorescence/multiphoton/multiphotonintro.html
+            ind2PM = ind2PM + 1;
+            tmp2PM = importdata(fullfile('data','cascadeBlue_2PM_685-852nm.csv'), ',', 1);
+            
+            fluoro2PM{ind2PM}.wavelength = tmp2PM.data(:,1);
+            fluoro2PM{ind2PM}.wavelengthRes = fluoro{ind2PM}.wavelength(2) - fluoro{ind2PM}.wavelength(1);
+            fluoro2PM{ind2PM}.excitation = tmp2PM.data(:,2);
+            fluoro2PM{ind2PM}.name = 'CascadeBlue';
+            fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'excitation');
+            
+            % get the emission spectrum automagically from the
+            % corresponding single-photon one
+            ind_1PM = find(ismember(getNameList(fluoro), fluoro2PM{ind2PM}.name));
+            if isempty(ind_1PM)
+                warning(['no emission data found for fluorophore: "', fluoro2PM{ind2PM}.name, '", is that so or did you have a typo?'])
+                fluoro2PM{ind2PM}.emission = [];
+                fluoro2PM{ind2PM}.plotColor = [0 0 0];
+                fluoro2PM{ind2PM}.wavelength = [];
+            else
+                fluoro2PM{ind2PM}.emission = fluoro{ind_1PM}.emission;
+                fluoro2PM{ind2PM}.plotColor = fluoro{ind_1PM}.plotColor;
+                fluoro2PM{ind2PM}.wavelength = fluoro{ind_1PM}.wavelength;
+            end
+            fluoro2PM = import_truncateInput(fluoro2PM, wavelength, 'emission');
+            
       
     %% ERROR HANDLING
     
