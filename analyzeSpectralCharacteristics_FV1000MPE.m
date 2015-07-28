@@ -1,17 +1,12 @@
 function analyzeSpectralCharacteristics_FV1000MPE()
 
-    % Get current folder
-    fileName = mfilename; fullPath = mfilename('fullpath');
-    pathCodeMain = strrep(fullPath, fileName, '');
-    cd(pathCodeMain)
-
     %% Import data   
     
         % "Master" wavelength vector. We now have spectral measurement with
         % various wavelengths, we just pad those with NaN values for easier
         % handling
         nmRes = 1; % [nm]
-        wavelength = (300 : nmRes : 1000)'; 
+        wavelength = (300 : nmRes : 1100)'; 
                  
         % FLUOROPHORES
         [fluoro, fluoro2PM] = import_fluorophoreData(wavelength);      
@@ -25,10 +20,10 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         PMTs = import_SpectralSensitivityPMT(wavelength);
 
         % Laser lines, light sources, etc.
-        peakWavelength = 825; % create synthetically, check whether this is correct!
+        peakWavelength = 860; % create synthetically, check whether this is correct!
                               % Replace maybe with actual in vivo
                               % measurements later
-        FWHM = 1; % [nm], check whether 10 nm is true for our system, broad for a laser
+        FWHM = 3; % [nm], check whether 10 nm is true for our system, broad for a laser
         lightSources = import_lightSources(wavelength, peakWavelength, FWHM);    
         
             % TODO, add the computations inside a for-loop so you could
@@ -71,7 +66,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         % this requires three 2D matrices (has to be the same length as the
         % wavelength vector        
         normalizeOn.light = true;
-        normalizeOn.excitation = true;
+        normalizeOn.excitation = false;
         normalizeOn.emission = true;
         normalizeOn.filter = true;
         normalizeOn.PMT = true;
@@ -81,7 +76,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         excitationMatrix = getDataMatrix(lightSources, wavelength, lightsWanted, 'light', [], normalizeOn);
         
         % Fluorophores
-        fluorophoresWanted = {'DOX'; 'OGB-1'; 'SR-101'; 'Di-4-ANEPPS'};        
+        fluorophoresWanted = {'Methoxy-X04'; 'OGB-1'; 'SR-101'; 'AlexaFluor633'};        
         yType = 'emission';
         fluoroEmissionMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);
         yType = 'excitation';
@@ -89,9 +84,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
                 
         % Channels 
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};
-        % from optimization (width 50 nm) for the center of the passband:
-        % RXD1: 441.5nm, RXD2: 528.3 nm, RXD3: 625.0 nm, RXD4: 672.0 nm
-        emissionFiltWanted = {'BA420-460'; 'BA515-560'; 'BA570-625HQ'; 'synthEM_720_50'};
+        emissionFiltWanted = {'BA420-460'; 'BA460-510'; 'BA570-625HQ'; 'synthEM_700_50'};
         dichroicsWanted = {'DM485'; 'synthDM_630'};
         barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4
         channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), emissionFiltWanted, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
@@ -114,14 +107,14 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     %% Plot spectral separability analysis
     
         options = [];        
-        plot_XijkResults = true;
-        saveOn = true;
+        plot_XijkResults = false;
+        saveOn = false;
         
         if plot_XijkResults
             
             fig5 = figure('Color', 'w', 'Name', 'Spectral Separability Basis Vectors');
                 set(fig5,  'Position', [0.04*scrsz(3) 0.05*scrsz(4) 0.40*scrsz(3) 0.90*scrsz(4)])
-                plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options, saveOn)
+                plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
                 
                 
             fig6 = figure('Color', 'w', 'Name', 'Xijk');
@@ -139,7 +132,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     
     %% Optimize the system
     
-        optimizeThe2PMSystem = false;
+        optimizeThe2PMSystem = true;
         if optimizeThe2PMSystem 
     
             % Above we have used fixed values, but we could want to find

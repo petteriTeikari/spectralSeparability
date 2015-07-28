@@ -1,4 +1,4 @@
-function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options, saveOn)
+function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
 
     rows = 3; cols = 1;   
      
@@ -79,9 +79,8 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         set(p{filterInd}(i), 'Color', channelMatrix.plotColor(i,:))
     end
     
-    drawnow    
-    if saveOn
-        export_fig(fullfile('figuresOut', 'XijkBasisVectors_plot.png'), '-r300', '-a1')
-    end
+    drawnow
+    
+    % export_fig(fullfile('figuresOut', 'XijkBasisVectors_plot.png'), '-r200', '-a1')
         
     

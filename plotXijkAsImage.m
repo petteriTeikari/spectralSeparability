@@ -50,8 +50,8 @@ function plotXijkAsImage(Xijk, upscaleFactor, fluoroEmission, channelMatrix, sav
     set(gca, 'XTickLabel', channelMatrix.name, 'XTick', xTickLocs)
     set(gca, 'FontSize', 8)
     
-    set(t, 'HorizontalAlignment', 'center', 'FontSize', 8)
-    set(t(:,:,1), 'FontWeight', 'bold', 'FontSize', 9)
+    set(t, 'HorizontalAlignment', 'center', 'FontSize', 6)
+    set(t(:,:,1), 'FontWeight', 'bold', 'FontSize', 7)
     
     title(['X_i_j_k, Laser peak = ', num2str(Xijk.laserPeak), ' nm '], 'FontWeight', 'bold', 'FontSize', 11)
     drawnow

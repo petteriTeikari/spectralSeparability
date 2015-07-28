@@ -59,7 +59,7 @@ function optim = optimize_2PM_system(optim_parameters, ...
         % help the optimization so that the filters do not overlap, move
         % only RXD2 and RXD4
         width = 50;        
-            %{
+        
             if x0(6) - (width/2) < x0(5) + (width/2)
                 x0(6) = x0(5) + 2*(width/2) + 30;
                 disp('Manual shift of RXD2 towards longer wavelengths')
@@ -69,7 +69,6 @@ function optim = optimize_2PM_system(optim_parameters, ...
                 x0(8) = x0(7) + 2*(width/2) + 30;
                 disp('Manual shift of RXD4 towards longer wavelengths')
             end  
-            %}
             
         % GAOT (Genetic Algorithm optiomization) requires a bit different 
         % syntax so now define another cost function for it (same output, idea though)
@@ -91,21 +90,9 @@ function optim = optimize_2PM_system(optim_parameters, ...
             % re-define bounds
             bounds = [lb' ub'];
             % plotHandles = h; % plot handles unused now
-            [x, endPop, bestSols, trace] = ga(bounds, 'optim_Xijk_costFunction_ga');
-                
+            [x, endPop, bestSols, trace] = ga(bounds, 'optim_Xijk_costFunction_ga')  
                 % TODO: check if there is a name conflict with the official
                 %       GA of Matlab
-                
-                % TODO: constrain the parameters, so that for example
-                %       "sufficient" power comes to each PMT, now the
-                %       algorithm can produce suboptimal dichroic mirror
-                %       values for example easily
-                
-                % you can use the bestSols for quick visualization of
-                % parameter search even though the values do not cover that
-                % much of the search space, but it still could be visual to
-                % make someone understand what happens here, and what the
-                % Xijk means
                 
             % display the results
             disp('BEST PARAMETERS for the 2PM-system')
