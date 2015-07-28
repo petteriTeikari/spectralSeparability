@@ -25,7 +25,15 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
                    
             % note now, we need to invert the transmittance as it is defined on
             % disk as passing the longer wavelength through
-            filterDichroic.data = 1 - filterDichroic.data;
+
+                % We need to check also if the user did not want any filter
+                % here (all transmittance values are ones)
+                if sum(filterDichroic.data) == length(filterDichroic.data)
+                    disp('No dichroic mirror for RXD1 and RXD2')
+                    % filterDichroic.data
+                else
+                    filterDichroic.data = 1 - filterDichroic.data;
+                end
 
             % Get this later clarified
             PMTWanted = {'PMT Ga-As'};
@@ -65,7 +73,15 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
            
             % note now, we need to invert the transmittance as it is defined on
             % disk as passing the longer wavelength through
-            filterDichroic.data = 1 - filterDichroic.data;
+            
+                % We need to check also if the user did not want any filter
+                % here (all transmittance values are ones)
+                if sum(filterDichroic.data) == length(filterDichroic.data)
+                    disp('No dichroic mirror for RXD3 and RXD4')
+                    % filterDichroic.data
+                else
+                    filterDichroic.data = 1 - filterDichroic.data;
+                end            
 
             % Get this later clarified
             PMTWanted = {'PMT Ga-As'};

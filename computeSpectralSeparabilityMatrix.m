@@ -90,20 +90,28 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                 % data is more scarce. You could have a situation where you
                 % now only 1PM-data for your wanted fluorophone
                 if nansum(fluoroExcitation.data(:,j)) == 0
-                    warning(['fluorophore ', fluoroExcitation.name{j}, ' does not have any excitation data'])
-                    disp('Assuming now that it has the excitation spectrum of its neighbor')
-                    disp('For more-or-less idea of the emission then')
-                    if noOfChannels > 1
-                        if j > 1 % take the previous
-                            fluoroExcitation.data(:,j) = fluoroExcitation.data(:,j-1);
-                            disp([' .. used the excitation spectrum of ', fluoroExcitation.name{j-1}])
-                        else % take the next one
-                            fluoroExcitation.data(:,j) = fluoroExcitation.data(:,j+1);
-                            disp([' .. used the excitation spectrum of ', fluoroExcitation.name{j+1}])
-                        end    
-                        fluoroExcitation.data(:,j) = removeNaNs(fluoroExcitation.data(:,j), 'excitation');
+                    
+                    if strcmp(fluoroExcitation.name{j}, 'none')
+                        
+                        % nothing need to be done as we did not want any
+                        % particular fluorophore for this channel
+                        
                     else
-                        disp('only one channel, cannot guess the excitation spectrum')
+                        warning(['fluorophore ', fluoroExcitation.name{j}, ' does not have any excitation data'])
+                        disp(' Assuming now that it has the excitation spectrum of its neighbor')
+                        disp('  For more-or-less idea of the emission then')
+                        if noOfChannels > 1
+                            if j > 1 % take the previous
+                                fluoroExcitation.data(:,j) = fluoroExcitation.data(:,j-1);
+                                disp(['  .. used the excitation spectrum of ', fluoroExcitation.name{j-1}])
+                            else % take the next one
+                                fluoroExcitation.data(:,j) = fluoroExcitation.data(:,j+1);
+                                disp(['  .. used the excitation spectrum of ', fluoroExcitation.name{j+1}])
+                            end    
+                            fluoroExcitation.data(:,j) = removeNaNs(fluoroExcitation.data(:,j), 'excitation');
+                        else
+                            disp('only one channel, cannot guess the excitation spectrum')
+                        end
                     end
                 end
                 

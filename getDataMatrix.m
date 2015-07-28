@@ -45,15 +45,14 @@
     end
 
     for j = 1 : length(dataWanted)
+        
         try
             ind(j) = find(ismember(names, dataWanted{j}));
             
         catch err
             
             if isempty(dataWanted{j})
-                
-                % ind(j) = [];                
-                error('empty fields not handled yet, implement at some point')
+                ind(j) = NaN;
             
             % special occasion when you want a synthetic dichroic mirror
             elseif ~isempty(strfind(dataWanted{j}, 'synthDM')) || ~isempty(strfind(dataWanted{j}, 'synthBARRIER'))
@@ -76,13 +75,12 @@
                 transmittance = import_syntheticEmissionFilter(wavelength, centerLambda, width);
                 dataIn{i} = transmittance;
                 wavelengthIn{i} = wavelength;       
-                ind = i; % quick fix, previous lines overwrite the input data
-                
+                ind = i; % quick fix, previous lines overwrite the input data                
                 
             else
                 
                 disp(names)
-                error(['You wanted "', num2str(dataWanted{j}), '" but it was not defined. These were found:'])            
+                error(['You wanted "', num2str(dataWanted{j}), '" but it was not defined. See above for found field names'])            
             end
         end
     end
@@ -114,9 +112,44 @@
     matrixOut = zeros(length(wavelength), length(ind)); % preallocate
     
     for k = 1 : length(ind)
-        matrixOut(:,k) = dataNew(:,ind(k));
-        dataOut.plotColor(k,:) = data{ind(k)}.plotColor;
-        dataOut.name{k} = data{ind(k)}.name;
+        
+        % "Normal case" when you want something for that given channel
+        if ~isnan(ind(k))
+            matrixOut(:,k) = dataNew(:,ind(k));
+            dataOut.plotColor(k,:) = data{ind(k)}.plotColor;
+            dataOut.name{k} = data{ind(k)}.name;
+            
+        % this is the case when we give empty strings, such as when we
+        % don't want any fluorophore, emission filter, etc. for the given
+        % channel
+        else
+            
+            dataOut.plotColor(k,:) = [0 0 0];
+            dataOut.name{k} = 'none';
+            
+            onesVector = ones(length(wavelength_new),1);
+            % Now the "empty vector" depends on our datatype
+            if strcmp(dataType, 'fluoro')
+                onesVector(:) = NaN;
+                matrixOut(:,k) = onesVector;
+                
+            elseif strcmp(dataType, 'filter')
+                matrixOut(:,k) = onesVector;
+                    % no filtering whatsoever in other words when
+                    % transmittance is constant 100%
+            
+            elseif strcmp(dataType, 'light')
+                warning('empty light? you have multiple light sources?')                
+                onesVector(:) = NaN;
+                matrixOut(:,k) = onesVector;
+                
+            elseif strcmp(dataType, 'PMT')
+                warning('empty PMT? not sure if it makes sense?')
+                onesVector(:) = NaN;
+                matrixOut(:,k) = onesVector;
+            end
+        end        
+        
         
         if normalizeOnForThisData
             matrixOut(:,k) = matrixOut(:,k) / max(matrixOut(:,k));
