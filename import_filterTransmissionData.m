@@ -114,6 +114,19 @@ function filters = import_filterTransmissionData(wavelength)
             filters.emissionDichroic{i}.transmittance = tmp.data(:,2);
             filters.emissionDichroic{i}.plotColor = 'r';
             
+    % 3rd Party emission filters
+        
+        j = j + 1;
+        filters.emissionFilter{j}.name = 'ET700lp';
+            % replicate plot of of "BA495-540HQ"
+            
+            fileName = 'ET700lp_474107-ascii.csv';
+            tmp = importdata(fullfile('data',fileName), ',', noOfHeaders);
+            filters.emissionFilter{j}.wavelength = tmp.data(:,1);
+            filters.emissionFilter{j}.transmittance = tmp.data(:,2);
+            filters.emissionFilter{j}.plotColor = [.5 0 .25];
+    
+            
     % Now the values can be in percent, easier to scale to 0:1 for
     % following computations
     for i = 1 : length(filters.emissionDichroic)

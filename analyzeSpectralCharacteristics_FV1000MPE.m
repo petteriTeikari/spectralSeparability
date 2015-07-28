@@ -6,12 +6,10 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         % various wavelengths, we just pad those with NaN values for easier
         % handling
         nmRes = 1; % [nm]
-        wavelength = (300 : nmRes : 1100)'; 
+        wavelength = (300 : nmRes : 1200)'; 
                  
         % FLUOROPHORES
-        [fluoro, fluoro2PM] = import_fluorophoreData(wavelength);      
-            list1PM = getNameList(fluoro)
-            list2PM = getNameList(fluoro2PM)
+        [fluoro, fluoro2PM] = import_fluorophoreData(wavelength);
         
         % Olympus FV100MPE filters
         filters = import_filterTransmissionData(wavelength);
@@ -33,6 +31,14 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         
         % Tissue Absorption
         tissueAttenuation = import_tissueAttenuation(wavelength);
+        
+        % DEBUG: List the data
+            list1PM = getNameList(fluoro)
+            list2PM = getNameList(fluoro2PM)
+            
+            listFiltersDichroic = getNameList(filters.emissionDichroic)
+            listFiltersEmission = getNameList(filters.emissionFilter)
+            listFiltersBarrier = getNameList(filters.barrierDichroic)
         
             
     %% PLOT INPUTs
@@ -76,7 +82,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         excitationMatrix = getDataMatrix(lightSources, wavelength, lightsWanted, 'light', [], normalizeOn);
         
         % Fluorophores
-        fluorophoresWanted = {'Methoxy-X04'; 'OGB-1'; 'SR-101'; 'AlexaFluor633'};        
+        fluorophoresWanted = {'CascadeBlue'; 'OGB-1'; 'SR-101'; 'Di-4-ANEPPS'};        
         yType = 'emission';
         fluoroEmissionMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);
         yType = 'excitation';
@@ -84,7 +90,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
                 
         % Channels 
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};
-        emissionFiltWanted = {'BA420-460'; 'BA460-510'; 'BA570-625HQ'; 'synthEM_700_50'};
+        emissionFiltWanted = {'BA420-460'; 'BA460-510'; 'BA570-625HQ'; 'ET700lp'};
         dichroicsWanted = {'DM485'; 'synthDM_630'};
         barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4
         channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), emissionFiltWanted, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
@@ -107,7 +113,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     %% Plot spectral separability analysis
     
         options = [];        
-        plot_XijkResults = false;
+        plot_XijkResults = true;
         saveOn = false;
         
         if plot_XijkResults
@@ -132,7 +138,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     
     %% Optimize the system
     
-        optimizeThe2PMSystem = true;
+        optimizeThe2PMSystem = false;
         if optimizeThe2PMSystem 
     
             % Above we have used fixed values, but we could want to find
