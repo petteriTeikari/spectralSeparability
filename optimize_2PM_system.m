@@ -24,7 +24,8 @@ function optim = optimize_2PM_system(optim_parameters, ...
              optim_parameters.RXD1emission.init ...
              optim_parameters.RXD2emission.init ...
              optim_parameters.RXD3emission.init ...
-             optim_parameters.RXD4emission.init]; 
+             optim_parameters.RXD4emission.init];
+         
 
         % constrain the range, use the variable names used in Matlab help
 
@@ -49,7 +50,7 @@ function optim = optimize_2PM_system(optim_parameters, ...
                   optim_parameters.RXD4emission.range(1)];
     
         % init visualization figure (unused now, as was used with fmincon)
-        visualizeOn = false
+        visualizeOn = false;
         if visualizeOn            
             [h.fig, h.sp, h.p, h.imgH, h.labels] = optim_initVisualize(wavelength, fluoroExcitationMatrix);
         else
@@ -90,7 +91,7 @@ function optim = optimize_2PM_system(optim_parameters, ...
             % re-define bounds
             bounds = [lb' ub'];
             % plotHandles = h; % plot handles unused now
-            [x, endPop, bestSols, trace] = ga(bounds, 'optim_Xijk_costFunction_ga')  
+            [x, endPop, bestSols, trace] = ga(bounds, 'optim_Xijk_costFunction_ga');
                 % TODO: check if there is a name conflict with the official
                 %       GA of Matlab
                 

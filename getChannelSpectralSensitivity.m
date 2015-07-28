@@ -29,7 +29,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
                 % We need to check also if the user did not want any filter
                 % here (all transmittance values are ones)
                 if sum(filterDichroic.data) == length(filterDichroic.data)
-                    disp('No dichroic mirror for RXD1 and RXD2')
+                    % disp('No dichroic mirror for RXD1 and RXD2')
                     % filterDichroic.data
                 else
                     filterDichroic.data = 1 - filterDichroic.data;
@@ -77,7 +77,7 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
                 % We need to check also if the user did not want any filter
                 % here (all transmittance values are ones)
                 if sum(filterDichroic.data) == length(filterDichroic.data)
-                    disp('No dichroic mirror for RXD3 and RXD4')
+                    % disp('No dichroic mirror for RXD3 and RXD4')
                     % filterDichroic.data
                 else
                     filterDichroic.data = 1 - filterDichroic.data;

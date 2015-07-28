@@ -82,7 +82,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         excitationMatrix = getDataMatrix(lightSources, wavelength, lightsWanted, 'light', [], normalizeOn);
         
         % Fluorophores
-        fluorophoresWanted = {'CascadeBlue'; 'OGB-1'; 'SR-101'; 'Di-4-ANEPPS'};        
+        fluorophoresWanted = {''; 'OGB-1'; 'SR-101'; 'Di-4-ANEPPS'};        
         yType = 'emission';
         fluoroEmissionMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);
         yType = 'excitation';
@@ -91,7 +91,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         % Channels 
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};
         emissionFiltWanted = {'BA420-460'; 'BA460-510'; 'BA570-625HQ'; 'ET700lp'};
-        dichroicsWanted = {'DM485'; 'synthDM_630'};
+        dichroicsWanted = {'DM485'; ''};
         barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4
         channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), emissionFiltWanted, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
         
@@ -113,7 +113,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     %% Plot spectral separability analysis
     
         options = [];        
-        plot_XijkResults = true;
+        plot_XijkResults = false;
         saveOn = false;
         
         if plot_XijkResults
@@ -138,7 +138,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     
     %% Optimize the system
     
-        optimizeThe2PMSystem = false;
+        optimizeThe2PMSystem = true;
         if optimizeThe2PMSystem 
     
             % Above we have used fixed values, but we could want to find
@@ -165,6 +165,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     
                         
     %% Spectral unmixing 
+    
     
         % We could do just blind source separation for the channels
         % afterwards, and in this script determine the setup parameters

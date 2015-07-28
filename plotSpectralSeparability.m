@@ -44,7 +44,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         p{ind} = plot(wavelength, channelMatrix.data);    
         % unwrap the structure for legendString
         for legSt = 1 : length(channelMatrix.filtersUsed)
-            legStr2{legSt} = channelMatrix.filtersUsed{legSt}.legendString
+            legStr2{legSt} = channelMatrix.filtersUsed{legSt}.legendString;
         end
         % legStr % TODO, contains extra entry?
         leg(ind) = legend(legStr2);        

@@ -41,8 +41,7 @@ function [x, diagonal] = optim_Xijk_costFunction_ga(x, options)
 
     % barrier filter, this separates RXD1&RXD2 from RXD3&RXD4
     % barrierFilterWanted = {'SDM560'};
-    barrierFilterWanted = {['synthBARRIER_', num2str(BFcut)]}; % DM1        
-
+    barrierFilterWanted = {['synthBARRIER_', num2str(BFcut)]}; % DM1
 
     channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), emissionFiltWanted, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
 
