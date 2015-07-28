@@ -59,23 +59,42 @@
                 
                 % parse input string
                 fields = textscan(dataWanted{j}, '%s%s', 'Delimiter', '_');
-                cutLambda = str2double(fields{2});                
-                transmittance = import_syntheticDichroicMirror(wavelength, cutLambda);
-                dataIn{i} = transmittance;
-                wavelengthIn{i} = wavelength;       
-                ind = i; % quick fix, previous lines overwrite the input data
+                cutLambda = str2double(fields{2});
+                
+                % this occurs when you do not want any dichroic filter for
+                % that channel
+                if isnan(cutLambda)
+                    ind(j) = NaN;
+                    
+                else
+                    transmittance = import_syntheticDichroicMirror(wavelength, cutLambda);
+                    dataIn{i} = transmittance;
+                    wavelengthIn{i} = wavelength;       
+                    ind = i; % quick fix, previous lines overwrite the input data                    
+                end
+                
           
             % special occasion when you want a synthetic emission filter
             elseif ~isempty(strfind(dataWanted{j}, 'synthEM'))
                 
                 % parse input string
                 fields = textscan(dataWanted{j}, '%s%s%s', 'Delimiter', '_');
-                centerLambda = str2double(fields{2});                
-                width = str2double(fields{3});    
-                transmittance = import_syntheticEmissionFilter(wavelength, centerLambda, width);
-                dataIn{i} = transmittance;
-                wavelengthIn{i} = wavelength;       
-                ind = i; % quick fix, previous lines overwrite the input data                
+                centerLambda = str2double(fields{2});
+                width = str2double(fields{3});
+                
+                % this occurs when you do not want any dichroic filter for
+                % that channel
+                if isnan(centerLambda)
+                    ind(j) = NaN;
+                    
+                else
+                    transmittance = import_syntheticEmissionFilter(wavelength, centerLambda, width);
+                    dataIn{i} = transmittance;
+                    wavelengthIn{i} = wavelength;       
+                    ind = i; % quick fix, previous lines overwrite the input data                       
+                end
+                
+                            
                 
             else
                 
