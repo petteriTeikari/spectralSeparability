@@ -207,6 +207,18 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.name = 'CascadeBlue';
             fluoro{ind}.plotColor = [0.6 0 0.6];
             
+        % QD800, for vascular labeling
+        % https://www.thermofisher.com/order/catalog/product/Q21771MP
+        
+            ind = ind + 1;
+            tmpData = importdata(fullfile(dataPath,'Qdot800.csv'), ',', 1);
+            fluoro{ind}.wavelength = tmpData.data(:,1);
+            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);            
+            fluoro{ind}.excitation = tmpData.data(:,2);
+            fluoro{ind}.emission = tmpData.data(:,3);
+            fluoro{ind}.name = 'Qdot800';
+            fluoro{ind}.plotColor = [0.2 0 0.0];
+            
     %% FLUORESCENT MARKERS (Two-photon Excitation)
     
         % Harder to find tabulated version of these, so have to extract
@@ -319,6 +331,16 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             strName = 'CascadeBlue';            
             fluoro2PM = import_fluorophore2PM(strName, dataPath, fileName, delimiter, noHeaderRows, ind2PM, wavelength, fluoro, fluoro2PM);
          
+        % QD800, quick fix
+        
+            % NOTE! Dummy, no data found yet for Qd800!!!
+            
+            ind2PM = ind2PM + 1;
+            fileName = 'fisher2005_RH1692_2PM-excitation.csv';
+            delimiter = ','; noHeaderRows = 1;            
+            strName = 'Qdot800';            
+            fluoro2PM = import_fluorophore2PM(strName, dataPath, fileName, delimiter, noHeaderRows, ind2PM, wavelength, fluoro, fluoro2PM);
+            
       
     %% ERROR HANDLING
     
