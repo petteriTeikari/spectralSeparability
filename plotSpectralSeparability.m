@@ -54,7 +54,7 @@ function plotSpectralSeparability(fig, scrsz, wavelength, excitationMatrix, fluo
         lab(ind,2) = ylabel('Normalized sensitivity');
         
     % style 
-    set(sp(1:ind), 'XLim', [350 750], 'YLim', [0 1])
+    set(sp(1:ind), 'XLim', [350 900], 'YLim', [0 1])
     set(sp(1), 'YLim', [0 1.02*yLimitsExcit(2)])
     set(sp(1), 'XLim', [700 1100]) % add some switch later
     % set(leg, 'Location', 'NorthEastOutside')
