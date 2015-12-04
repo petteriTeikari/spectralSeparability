@@ -14,6 +14,21 @@ function plotXijkSpectra(fig, scrsz, wavelength, excitationMatrix, fluoroEmissio
                                                 cell2mat(channelMatrix.filtersUsed{ch}.emission));
     end
     
+    % normalize the emissions per channel (let values be less than 1 if
+    % none of the values exceed one), kinda quick fix atm
+    for k = 1 : size(Xijk.matrix,2); % number of channels
+        for j = 1 : size(Xijk.matrix,1); % number of fluorophores 
+            channelFluorophores(:,j) = Xijk.emission{laserIndex,j,k};
+        end
+        maxValue(k) = max(max(channelFluorophores))        
+        
+        if maxValue(k) < 1
+            maxValue(k) = 1;
+        end
+    end
+    
+    
+    
     for j = 1 : size(Xijk.matrix,1); % number of fluorophores        
         for k = 1 : size(Xijk.matrix,2); % number of channels
             
@@ -21,7 +36,7 @@ function plotXijkSpectra(fig, scrsz, wavelength, excitationMatrix, fluoroEmissio
             sp(j,k) = subplot(rows,cols,ind);
                 p{j,k}(1) = area(wavelength, Xijk.channel{laserIndex,j,k});  
                 hold on
-                p{j,k}(2) = plot(wavelength, Xijk.emission{laserIndex,j,k});
+                p{j,k}(2) = plot(wavelength, Xijk.emission{laserIndex,j,k} / maxValue(k));
                 hold off                                
             
             % color            

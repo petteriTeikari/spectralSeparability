@@ -12,6 +12,8 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
  
     % TODO: simplify the use of cells, remove double-cells at some point
     
+    
+    
     %% CHANNEL-SPECIFIC 
     
         if strcmp(channelWanted, 'RXD1') % VIOLET (420-460 nm)
@@ -34,6 +36,11 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
                 else
                     filterDichroic.data = 1 - filterDichroic.data;
                 end
+                
+            filtersWanted_SDM = barrierFilterWanted;
+            filterSDM = getDataMatrix(filters.barrierDichroic, wavelength, filtersWanted_SDM, 'filter', [], normalizeOn);
+            
+                filterSDM.data = 1- filterSDM.data;
 
             % Get this later clarified
             PMTWanted = {'PMT Ga-As'};
@@ -50,6 +57,11 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
 
             filtersWantedDichroic = {dichroicsWanted{1}};
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
+            
+            filtersWanted_SDM = barrierFilterWanted;
+            filterSDM = getDataMatrix(filters.barrierDichroic, wavelength, filtersWanted_SDM, 'filter', [], normalizeOn);
+            
+                filterSDM.data = 1- filterSDM.data;
 
             % Get this later clarified
             PMTWanted = {'PMT Ga-As'};
@@ -70,7 +82,10 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
 
             filtersWantedDichroic = {dichroicsWanted{2}}; % 'DM570'
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
-           
+            
+            filtersWanted_SDM = barrierFilterWanted;
+            filterSDM = getDataMatrix(filters.barrierDichroic, wavelength, filtersWanted_SDM, 'filter', [], normalizeOn);
+   
             % note now, we need to invert the transmittance as it is defined on
             % disk as passing the longer wavelength through
             
@@ -102,6 +117,9 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
 
             filtersWantedDichroic = {dichroicsWanted{2}}; % 'DM570'
             filterDichroic = getDataMatrix(filters.emissionDichroic, wavelength, filtersWantedDichroic, 'filter', [], normalizeOn);
+            
+            filtersWanted_SDM = barrierFilterWanted;
+            filterSDM = getDataMatrix(filters.barrierDichroic, wavelength, filtersWanted_SDM, 'filter', [], normalizeOn);
 
             % filterDichroic.data = 1 - filterDichroic.data;
             
@@ -123,11 +141,13 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
         % size(filterEmission.data)
         % size(filterDichroic.data)
         % size(PMT.data)
-        channelVector = filterEmission.data .* filterDichroic.data .* PMT.data;
+        channelVector = filterEmission.data .* filterDichroic.data .* PMT.data .* filterSDM.data;
         filtersUsed.emission = filtersWantedEmission;
         filtersUsed.emissionData = filterEmission.data;
         filtersUsed.dichroic = filtersWantedDichroic;
         filtersUsed.dichroicData = filterDichroic.data;
+        filtersUsed.SDM = barrierFilterWanted;
+        filtersUsed.SDM_Data = filterSDM.data;
         
         % for easier plotting later, construct the legend string to be displayed    
         filtersUsed.legendString = [channelWanted, ' (', cell2mat(filtersUsed.dichroic), '+', cell2mat(filtersUsed.emission),')'];
@@ -142,8 +162,8 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
             disp(' DEBUG PLOT from getChannelSpectralSensitivity.m')
             
             if ch == 1
-                scrsz = get(0,'ScreenSize'); % get screen size for plotting    
-                fig = figure;
+                scrsz = get(0,'ScreenSize'); % get screen size for plotting
+                fig = figure('Color','w');
                     set(fig,  'Position', [0.4*scrsz(3) 0.345*scrsz(4) 0.550*scrsz(3) 0.60*scrsz(4)])
                 
             end
@@ -170,7 +190,8 @@ function [channelVector, plotColor, filtersUsed] = getChannelSpectralSensitivity
                 tit(ch) = title(channelWanted);
                 
                 set(p(ch,end), 'Color', plotColor)
-                set(sp(ch), 'XLim', [400 700])
+                set(sp(ch), 'XLim', [300 900], 'YLim', [0 1.05])
+                drawnow
                 
         end
         

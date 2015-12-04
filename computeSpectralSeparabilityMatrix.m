@@ -68,6 +68,7 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
     excitationOfFluorophoreScalar = zeros(noOfLightSources, noOfFluorophores, noOfChannels);
     emissionOfFluorophoreVectorRaw = zeros(noOfLightSources, noOfFluorophores, noOfChannels, numberOfWavelengthPoints);
     emissionOfFluorophoreVector = zeros(noOfLightSources, noOfFluorophores, noOfChannels, numberOfWavelengthPoints);
+    emissionOfFluorophoreVectorDichroic = zeros(noOfLightSources, noOfFluorophores, noOfChannels, numberOfWavelengthPoints);
     channelResponseVector = zeros(noOfLightSources, noOfFluorophores, noOfChannels, numberOfWavelengthPoints);
     channelResponseScalar = zeros(noOfLightSources, noOfFluorophores, noOfChannels);
     
@@ -131,16 +132,13 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                 % really as a function of excitation intensity
                 emissionOfFluorophoreVectorRaw(i,j,k,:) = excitationOfFluorophoreScalar(i,j,k) .* fluoroEmission.data(:,j);
                 
-                    % TODO: we could keep track the reductions in intensity
-                    % here or later so that the spectra could be normalized
-                    % but still keeping these filtering steps?
+                    
                                 
                 % we have to correct the emission with the used dichroic
                 % mirror (DM1 and DM2; separating RXD1/RXD2 and RXD3/RXD4 respectively)
                 dichroicMirror = channelMatrix.filtersUsed{k}.dichroicData;
                 emissionOfFluorophoreVectorDichroic(i,j,k,:) = squeeze(emissionOfFluorophoreVectorRaw(i,j,k,:)) .* dichroicMirror;                
-                
-                
+                                
                 % now filter this emission with the barrier filter (defined
                 % above), first "splitter" of the light into 2 arms (1st
                 % with RXD1 and RXD2, and the 2nd RXD3 and RXD4)
@@ -161,6 +159,10 @@ function Xijk = computeSpectralSeparabilityMatrix(wavelength,excitationLaser, fl
                     % practice as most of the PMT sensitivity spectrum is
                     % defined by the "last" emission filter (BAxxx-yyyy)
                 
+                    % TODO: we could keep track the reductions in intensity
+                    % here or later so that the spectra could be normalized
+                    % but still keeping these filtering steps?
+                    
                 % auxiliary outputs
                 Xijk.excitation{i,j,k} = squeeze(excitationOfFluorophoreVector(i,j,k,:));
                 Xijk.excitationScalar(i,j,k) = excitationOfFluorophoreScalar(i,j,k);

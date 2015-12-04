@@ -68,13 +68,7 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.name = 'SR-101';
             fluoro{ind}.plotColor = [1 0 0.6];
             
-        % Red alternative for SR-101
-        
-            % Kim D, Moon H, Baik SH, Singha S, Jun YW, Wang T, Kim KH, Park BS, Jung J, Mook-Jung I, Ahn KH. 2015. 
-            % Two-Photon Absorbing Dyes with Minimal Autofluorescence in Tissue Imaging: Application to in Vivo Imaging of Amyloid-β Plaques with a Negligible Background Signal. 
-            % J. Am. Chem. Soc. 137:6781–6789. 
-            % http://dx.doi.org/10.1021/jacs.5b03548.
-
+       
             
         % Doxyrubicin
 
@@ -146,6 +140,14 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'Methoxy-X04';
             fluoro{ind}.plotColor = [0 0.75 0.75];
+            
+             % Red alternative for Methoxy-X04
+        
+            % Kim D, Moon H, Baik SH, Singha S, Jun YW, Wang T, Kim KH, Park BS, Jung J, Mook-Jung I, Ahn KH. 2015. 
+            % Two-Photon Absorbing Dyes with Minimal Autofluorescence in Tissue Imaging: Application to in Vivo Imaging of Amyloid-β Plaques with a Negligible Background Signal. 
+            % J. Am. Chem. Soc. 137:6781–6789. 
+            % http://dx.doi.org/10.1021/jacs.5b03548.
+
 
         % di-8-ANEPPS, voltage-sensitive dye (VSD)
         % https://www.lifetechnologies.com/order/catalog/product/D3167
@@ -218,6 +220,30 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             fluoro{ind}.emission = tmpData.data(:,3);
             fluoro{ind}.name = 'Qdot800';
             fluoro{ind}.plotColor = [0.2 0 0.0];
+            
+        % QD705, for vascular labeling
+        % https://www.thermofisher.com/ca/en/home/life-science/cell-analysis/fluorophores/qdot-705.html
+        
+            ind = ind + 1;
+            tmpData = importdata(fullfile(dataPath,'Qdot705.csv'), ',', 1);
+            fluoro{ind}.wavelength = tmpData.data(:,1);
+            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);            
+            fluoro{ind}.excitation = tmpData.data(:,2);
+            fluoro{ind}.emission = tmpData.data(:,3);
+            fluoro{ind}.name = 'Qdot705';
+            fluoro{ind}.plotColor = [0.2 0 0.0];
+            
+        % GFP, Emerald
+        % https://www.thermofisher.com/ca/en/home/life-science/cell-analysis/fluorophores/green-fluorescent-protein.html
+        
+            ind = ind + 1;
+            tmpData = importdata(fullfile(dataPath,'GFP_emeraldGFP.csv'), ',', 1);
+            fluoro{ind}.wavelength = tmpData.data(:,1);
+            fluoro{ind}.wavelengthRes = fluoro{ind}.wavelength(2) - fluoro{ind}.wavelength(1);            
+            fluoro{ind}.excitation = tmpData.data(:,2);
+            fluoro{ind}.emission = tmpData.data(:,3);
+            fluoro{ind}.name = 'GFP';
+            fluoro{ind}.plotColor = [0 1 0.45];
             
     %% FLUORESCENT MARKERS (Two-photon Excitation)
     
@@ -340,7 +366,36 @@ function [fluoro, fluoro2PM] = import_fluorophoreData(wavelength)
             delimiter = ','; noHeaderRows = 1;            
             strName = 'Qdot800';            
             fluoro2PM = import_fluorophore2PM(strName, dataPath, fileName, delimiter, noHeaderRows, ind2PM, wavelength, fluoro, fluoro2PM);
+        
+        % QD800, quick fix
+        
+            % NOTE! Dummy, no data found yet for Qd800!!!
             
+            ind2PM = ind2PM + 1;
+            fileName = 'fisher2005_RH1692_2PM-excitation.csv';
+            delimiter = ','; noHeaderRows = 1;            
+            strName = 'Qdot705';            
+            fluoro2PM = import_fluorophore2PM(strName, dataPath, fileName, delimiter, noHeaderRows, ind2PM, wavelength, fluoro, fluoro2PM);
+            
+        % QD800, quick fix
+        
+            % NOTE! Dummy, no data found yet for Qd800!!!
+            
+            ind2PM = ind2PM + 1;
+            fileName = 'fisher2005_RH1692_2PM-excitation.csv';
+            delimiter = ','; noHeaderRows = 1;            
+            strName = 'GFP';            
+            fluoro2PM = import_fluorophore2PM(strName, dataPath, fileName, delimiter, noHeaderRows, ind2PM, wavelength, fluoro, fluoro2PM);
+            
+        % QD800, quick fix
+        
+            % NOTE! Dummy, no data found yet for Qd800!!!
+            
+            ind2PM = ind2PM + 1;
+            fileName = 'fisher2005_RH1692_2PM-excitation.csv';
+            delimiter = ','; noHeaderRows = 1;            
+            strName = 'Texas Red';            
+            fluoro2PM = import_fluorophore2PM(strName, dataPath, fileName, delimiter, noHeaderRows, ind2PM, wavelength, fluoro, fluoro2PM);
       
     %% ERROR HANDLING
     

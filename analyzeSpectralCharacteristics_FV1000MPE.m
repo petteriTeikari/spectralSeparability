@@ -21,7 +21,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         peakWavelength = 860; % create synthetically, check whether this is correct!
                               % Replace maybe with actual in vivo
                               % measurements later
-        FWHM = 3; % [nm], check whether 10 nm is true for our system, broad for a laser
+        FWHM = 1; % [nm], check whether 10 nm is true for our system, broad for a laser
         lightSources = import_lightSources(wavelength, peakWavelength, FWHM);    
         
             % TODO, add the computations inside a for-loop so you could
@@ -72,7 +72,7 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         % this requires three 2D matrices (has to be the same length as the
         % wavelength vector        
         normalizeOn.light = true;
-        normalizeOn.excitation = false;
+        normalizeOn.excitation = true; % TODO: false does not work with band plot
         normalizeOn.emission = true;
         normalizeOn.filter = true;
         normalizeOn.PMT = true;
@@ -82,7 +82,12 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         excitationMatrix = getDataMatrix(lightSources, wavelength, lightsWanted, 'light', [], normalizeOn);
         
         % Fluorophores
-        fluorophoresWanted = {''; 'OGB-1'; 'SR-101'; 'Di-4-ANEPPS'};        
+        fluorophoresWanted = {'CascadeBlue'; 'OGB-1'; 'SR-101'; 'Di-4-ANEPPS'};        
+        % fluorophoresWanted = {'Methoxy-X04'; 'OGB-1'; 'SR-101'; 'Di-4-ANEPPS'};
+        % fluorophoresWanted = {'CascadeBlue'; 'GFP'; 'DOX'; 'Qdot705'}; % Marc
+        % fluorophoresWanted = {'Methoxy-X04'; 'OGB-1'; 'DOX'; 'Qdot800'}; % Marc
+        % fluorophoresWanted = {'Methoxy-X04'; 'FITC'; 'Texas Red'; 'Qdot705'}; % Charissa
+        fluorophoresWanted = {'Methoxy-X04'; 'OGB-1'; 'SR-101'; 'AlexaFluor633'}; % Charissa
         yType = 'emission';
         fluoroEmissionMatrix = getDataMatrix(fluoro2PM, wavelength, fluorophoresWanted, 'fluoro', yType, normalizeOn);
         yType = 'excitation';
@@ -90,9 +95,14 @@ function analyzeSpectralCharacteristics_FV1000MPE()
                 
         % Channels 
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};
-        emissionFiltWanted = {'BA420-460'; 'BA460-510'; 'BA570-625HQ'; 'ET700lp'};
-        dichroicsWanted = {'DM485'; ''};
+        % emissionFiltWanted = {'BA420-460'; 'BA460-510'; 'BA570-625HQ'; 'ET700lp'};
+        emissionFiltWanted = {'synthEM_440_40'; 'synthEM_520_40'; 'synthEM_595_50'; 'ET655lp'};
+        dichroicsWanted = {'synthDM_470'; 'T635lpxr'};
         barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4
+        % barrierFilterWanted = {'synthBARRIER_647'}; % this separates RXD1&RXD2 from RXD3&RXD4
+                % TODO: not really a barrier filter, change the variable
+                % name
+        
         channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), emissionFiltWanted, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
         
         % compute the spectral separability matrix, X_{ijk} 
@@ -113,32 +123,39 @@ function analyzeSpectralCharacteristics_FV1000MPE()
     %% Plot spectral separability analysis
     
         options = [];        
-        plot_XijkResults = false;
+        plot_XijkResults = true;
         saveOn = false;
         
         if plot_XijkResults
             
+           
             fig5 = figure('Color', 'w', 'Name', 'Spectral Separability Basis Vectors');
                 set(fig5,  'Position', [0.04*scrsz(3) 0.05*scrsz(4) 0.40*scrsz(3) 0.90*scrsz(4)])
                 plotSpectralSeparability(fig5, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
                 
-                
+            
             fig6 = figure('Color', 'w', 'Name', 'Xijk');
                 set(fig6,  'Position', [0.65*scrsz(3) 0.725*scrsz(4) 0.35*scrsz(3) 0.35*scrsz(4)])
                 upscaleFactor = 100;
                 plotXijkAsImage(Xijk, upscaleFactor, fluoroEmissionMatrix, channelMatrix, saveOn)        
 
-
+            %{
             fig7 = figure('Color', 'w', 'Name', 'Xijk (Spectra)');
                 set(fig7,  'Position', [0.4*scrsz(3) 0.02*scrsz(4) 0.60*scrsz(3) 0.60*scrsz(4)])
                 plotXijkSpectra(fig7, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, Xijk, Eijk, options)
+            %}
+  
+            fig8 = figure('Color', 'w', 'Name', 'Channel Bands with Emission');
+                set(fig8,  'Position', [0.2*scrsz(3) 0.02*scrsz(4) 0.60*scrsz(3) 0.95*scrsz(4)])
+                plotChannelBandsWithEmission(fig8, scrsz, wavelength, excitationMatrix, fluoroEmissionMatrix, fluoroExcitationMatrix, channelMatrix, PMTs, Xijk, Eijk, options)
+
             
         end
         
     
     %% Optimize the system
     
-        optimizeThe2PMSystem = true;
+        optimizeThe2PMSystem = false;
         if optimizeThe2PMSystem 
     
             % Above we have used fixed values, but we could want to find
