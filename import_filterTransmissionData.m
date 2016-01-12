@@ -128,7 +128,7 @@ function filters = import_filterTransmissionData(wavelength)
         j = j + 1;
         filters.emissionFilter{j}.name = 'ET655lp';        
             
-            fileName = 'ET760-140m-2p.txt';
+            fileName = 'ET730-140m-2p.txt';
             tmp = importdata(fullfile('data',fileName), '\t', noOfHeaders);
             filters.emissionFilter{j}.wavelength = tmp.data(:,1);
             filters.emissionFilter{j}.transmittance = tmp.data(:,2);
