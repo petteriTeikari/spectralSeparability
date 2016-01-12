@@ -97,11 +97,15 @@ function analyzeSpectralCharacteristics_FV1000MPE()
         channelsWanted = {'RXD1'; 'RXD2'; 'RXD3'; 'RXD4'};
         % emissionFiltWanted = {'BA420-460'; 'BA460-510'; 'BA570-625HQ'; 'ET700lp'};
         emissionFiltWanted = {'synthEM_440_40'; 'synthEM_520_40'; 'synthEM_595_50'; 'ET655lp'};
-        dichroicsWanted = {'synthDM_470'; 'T635lpxr'};
-        barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4
+        dichroicsWanted = {'T470lpxr'; 'T635lpxr'};
+        barrierFilterWanted = {'SDM560'}; % this separates RXD1&RXD2 from RXD3&RXD4, and cannot be changed
         % barrierFilterWanted = {'synthBARRIER_647'}; % this separates RXD1&RXD2 from RXD3&RXD4
                 % TODO: not really a barrier filter, change the variable
                 % name
+
+	% PT: FilterCube order, uses the following filters
+	% dichroicsWanted = {'T470lpxr'; 'T635lpxr'};
+        % emissionFiltWanted = {'ET440-40'; 'ET525-50'; 'ET595-50'; 'ET655lp'};
         
         channelMatrix = getChannelWrapper(channelsWanted, length(channelsWanted), emissionFiltWanted, dichroicsWanted, barrierFilterWanted, wavelength, filters, PMTs, normalizeOn);
         

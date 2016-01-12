@@ -113,6 +113,14 @@ function filters = import_filterTransmissionData(wavelength)
             filters.emissionDichroic{i}.wavelength = tmp.data(:,1);
             filters.emissionDichroic{i}.transmittance = tmp.data(:,2);
             filters.emissionDichroic{i}.plotColor = 'r';
+
+	i = i + 1;
+        filters.emissionDichroic{i}.name = 'T470lpxr';
+        fileName = 'T470lpxr_Chroma_5155-ascii.txt';
+        tmp = importdata(fullfile('data',fileName), delim, noOfHeaders);
+            filters.emissionDichroic{i}.wavelength = tmp.data(:,1);
+            filters.emissionDichroic{i}.transmittance = tmp.data(:,2);
+            filters.emissionDichroic{i}.plotColor = 'b';
             
     % 3rd Party emission filters
         
@@ -133,6 +141,33 @@ function filters = import_filterTransmissionData(wavelength)
             filters.emissionFilter{j}.wavelength = tmp.data(:,1);
             filters.emissionFilter{j}.transmittance = tmp.data(:,2);
             filters.emissionFilter{j}.plotColor = [.5 0 .25];
+
+	j = j + 1;
+        filters.emissionFilter{j}.name = 'ET440-40';        
+            
+            fileName = 'ET440-40m-2p.txt';
+            tmp = importdata(fullfile('data',fileName), '\t', noOfHeaders);
+            filters.emissionFilter{j}.wavelength = tmp.data(:,1);
+            filters.emissionFilter{j}.transmittance = tmp.data(:,2);
+            filters.emissionFilter{j}.plotColor = [0 0 1]; % TODO, refine colors
+
+	j = j + 1;
+        filters.emissionFilter{j}.name = 'ET525-50';        
+            
+            fileName = 'ET525-50m-2p.txt';
+            tmp = importdata(fullfile('data',fileName), '\t', noOfHeaders);
+            filters.emissionFilter{j}.wavelength = tmp.data(:,1);
+            filters.emissionFilter{j}.transmittance = tmp.data(:,2);
+            filters.emissionFilter{j}.plotColor = [0 1 0]; % TODO, refine colors
+
+	j = j + 1;
+        filters.emissionFilter{j}.name = 'ET595-50';        
+            
+            fileName = 'ET595-50m-2p.txt';
+            tmp = importdata(fullfile('data',fileName), '\t', noOfHeaders);
+            filters.emissionFilter{j}.wavelength = tmp.data(:,1);
+            filters.emissionFilter{j}.transmittance = tmp.data(:,2);
+            filters.emissionFilter{j}.plotColor = [1 0 0]; % TODO, refine colors
             
     % Now the values can be in percent, easier to scale to 0:1 for
     % following computations
